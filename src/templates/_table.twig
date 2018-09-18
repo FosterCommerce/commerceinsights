@@ -1,0 +1,51 @@
+{% set pageSortKey = craft.request.getParam('sort') ?: 'dateOrdered' %}
+{% set pageSortDirection = craft.request.getParam('dir') ?: 'asc' %}
+
+{% set headings = [
+    {label: "Date", sortable: true, sortKey: 'dateOrdered'},
+    {label: "Number", sortable: false},
+    {label: "Status", sortable: false},
+    {label: "Base Price", sortable: true, sortKey: 'totalPrice'},
+    {label: "Tax", sortable: false, sortKey: 'tax'},
+    {label: "Discount", sortable: false, sortKey: 'discount'},
+    {label: "Total Paid", sortable: true, sortKey: 'totalPaid'},
+    {label: "Email", sortable: false},
+] %}
+
+<table class="data fullwidth">
+    <thead>
+    <tr>
+        {% for heading in headings %}
+            {% set url = craft.url.create %}
+            {% set classNames = [] %}
+            {% if pageSortKey == heading.sortKey|default(false) %}
+                {% set classNames = classNames|merge(['ordered']) %}
+                {% set classNames = classNames|merge([pageSortDirection]) %}
+                {% set url = url.query('dir', url.query('dir') != 'desc' ? 'desc': 'asc') %}
+            {% elseif heading.sortable %}
+                {% set classNames = classNames|merge(['orderable']) %}
+                {% set url = url.query('sort', heading.sortKey).removeQuery('dir') %}
+            {% endif %}
+            <th class="{{ classNames|join(' ') }}">
+                {% if heading.sortable %}<a href="{{ url }}">{% endif %}
+                    {{ heading.label }}
+                {% if heading.sortable %}</a>{% endif %}
+            </th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for order in data %}
+        <tr>
+            <td>{{ order.dateOrdered.format('m/d/Y') }}</td>
+            <td><abbr title="{{ order.number }}"><a href="/admin/commerce/orders/{{ order.id }}">{{ order.number|slice(0,8) }}</a></abbr></td>
+            <td>{{ order.orderStatus }}</td>
+            <td>{{ order.totalPrice|currency }}</td>
+            <td>{{ order.getLineItems()[0].getAdjustmentsTotalByType('tax')|default(0)|currency }}</td>
+            <td>{{ order.totalDiscount|currency }}</td>
+            <td>{{ order.totalPaid|currency }}</td>
+            <td>{{ order.email }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

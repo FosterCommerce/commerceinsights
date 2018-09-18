@@ -1,0 +1,59 @@
+{% extends "_layouts/cp" %}
+{%- from "_includes/forms" import text -%}
+
+{% set title = "Orders"|t('commerceinsights') %}
+{% set url = craft.url.create %}
+
+{% block sidebar %}
+    <nav>
+        <ul>
+            <li><a href="{{ url.query('formatter', 'totalOrders') }}" data-dynamic-link='{"query":{"formatter":"totalOrders"}}' {{ formatter == 'totalOrders' ? 'class="sel"' }}>Selected Date Range</a></li>
+            <li><a href="{{ url.query('formatter', 'totalRevenue') }}" data-dynamic-link='{"query":{"formatter":"totalRevenue"}}' {{ formatter == 'totalRevenue' ? 'class="sel"' }}>Today</a></li>
+            <li><a href="{{ url.query('formatter', 'averageRevenuePerOrder') }}" data-dynamic-link='{"query":{"formatter":"averageRevenuePerOrder"}}' {{ formatter == 'averageRevenuePerOrder' ? 'class="sel"' }}>This Week</a></li>
+            <li><a href="{{ url.query('formatter', 'totalOrders') }}" data-dynamic-link='{"query":{"formatter":"totalOrders"}}' {{ formatter == 'totalOrders' ? 'class="sel"' }}>This Month</a></li>
+            <li><a href="{{ url.query('formatter', 'totalRevenue') }}" data-dynamic-link='{"query":{"formatter":"totalRevenue"}}' {{ formatter == 'totalRevenue' ? 'class="sel"' }}>This Year</a></li>
+        </ul>
+    </nav>
+{% endblock %}
+
+{% block actionButton %}
+    {% set ranges = {
+                    'today': 'Today',
+                    'this-week': 'This week',
+                    'this-month': 'This month',
+                    'this-quarter': 'This quarter',
+                    'this-year': 'This year',
+                    'yesterday': 'Yesterday',
+                    'prev-week': 'Previous week',
+                    'prev-month': 'Previous month',
+                    'prev-quarter': 'Previous quarter',
+                    'prev-year': 'Previous year',
+                    '': 'Custom'
+                } %}
+    {% include "_includes/forms/select" with {name: "range", options: ranges, value: craft.request.getParam('range')} %}
+    {% include "_includes/forms/date" with {name: "start", value: craft.request.getParam('start')} %}
+    {% include "_includes/forms/date" with {name: "end", value: craft.request.getParam('end')} %}
+{% endblock %}
+
+{% block content %}
+    <div class="ci-spacing">
+
+        {% if totals %}
+            <ul class="ci-totals">
+                {% for key, value in totals %}
+                    <li>
+                        <div class="ci-total-label">{{ key }}</div> <strong class="ci-total-value">{{ value }}</strong>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="chart">
+            <canvas id="chart" width="900" height="300" data-chart-data="{{ chartData|json_encode }}" data-chart-start="{{ min }}" data-chart-end="{{ max }}" data-chart-shows-currency="{{ chartShowsCurrency }}"></canvas>
+        </div>
+
+        <div class="elements">
+            {{ chartTable|raw }}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "_layouts/cp" %}
+{%- from "_includes/forms" import text -%}
+
+{% set title = "Dashboard"|t('commerceinsights') %}
+{% set url = craft.url.create %}
+
+{% block content %}
+    <div class="ci-spacing">
+        
+        <h2>Statistics</h2>
+        
+        <ul class="ci-totals">
+           
+            <li>
+                <div class="ci-total-label">Orders</div> <strong class="ci-total-value">1,234</strong>
+            </li>
+
+            <li>
+                <div class="ci-total-label">Customers</div> <strong class="ci-total-value">743</strong>
+            </li>
+
+            <li>
+                <div class="ci-total-label">Products</div> <strong class="ci-total-value">323</strong>
+            </li>
+
+            <li>
+                <div class="ci-total-label">Categories</div> <strong class="ci-total-value">14</strong>
+            </li>        
+
+        </ul>
+
+    </div>
+{% endblock %}

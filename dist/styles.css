@@ -1,0 +1,113 @@
+.ci-actions {
+    display: flex;
+    align-items: baseline;
+}
+
+[class^="ci-action-"] {
+    padding: 0 10px;
+}
+div[class^="ci-action-"]:first-of-type {
+    padding-left: 0;
+}
+div[class^="ci-action-"]:last-of-type {
+    padding-right: 0;
+}
+
+.ci-action-filter {
+    position: relative;
+}
+
+.ci-action-search {
+    flex-grow: 1;
+}
+
+.ci-filter {
+    position: absolute;
+    top: 2em;
+    left: 0;
+    background: #fff;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    border-radius: 3px;
+    padding: 20px;
+}
+
+.ci-spacing > * + * {
+    margin-top: 30px;
+}
+
+.ci-spacing-small > * + * {
+    margin-top: 15px;
+}
+
+label[for="filter-toggle"] {
+    padding: 7px 22px 7px 10px;
+    position: relative;
+}
+
+label[for="filter-toggle"]::after {
+    font-family: 'Craft';
+    speak: none;
+    -webkit-font-feature-settings: "liga", "dlig";
+    -ms-font-feature-settings: "liga", "dlig";
+    -o-font-feature-settings: "liga", "dlig";
+    font-feature-settings: "liga", "dlig";
+    text-rendering: optimizeLegibility;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: inline-block;
+    text-align: center;
+    font-style: normal;
+    vertical-align: middle;
+    word-wrap: normal !important;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    position: absolute;
+    z-index: 1;
+    top: calc(50% - 5px);
+    right: 9px;
+    font-size: 10px;
+    content: 'downangle';
+    user-select: none;
+    pointer-events: none;
+}
+
+#filter-toggle {
+    display: none;
+}
+
+.ci-filter {
+    display: none;
+}
+
+#filter-toggle:checked + .ci-filter {
+    display: block;
+}
+
+.ci-totals {
+    background: #fbfcfd;
+    border: 1px solid #e3e5e8;
+    padding: 10px;
+    display: flex;
+}
+
+.ci-totals > * {
+    flex-grow: 1;
+    width: 100%;
+    text-align: center;
+}
+
+.ci-total-label {
+    font-size: 10px;
+    text-transform: uppercase;
+}
+
+.ci-total-value {
+    font-size: 20px;
+}

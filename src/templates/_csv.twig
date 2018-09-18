@@ -1,0 +1,24 @@
+{{ [
+    "Date",
+    "Number",
+    "Order Status",
+    "Total Price",
+    "Tax",
+    "Discount",
+    "Total Paid",
+    "Email",
+]|e('html_attr')|wrap('"')|join(',') }}
+
+{% for order in data %}
+{% set row = [
+    order.dateOrdered.format('m/d/Y'),
+    order.number,
+    order.orderStatus,
+    order.totalPrice|currency,
+    order.getLineItems()[0].getAdjustmentsTotalByType('tax')|default(0)|currency,
+    order.totalDiscount|currency,
+    order.totalPaid|currency,
+    order.email,
+] %}
+{{ row|e('html_attr')|wrap('"')|join(',') }}
+{% endfor %}

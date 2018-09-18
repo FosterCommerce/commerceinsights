@@ -1,0 +1,63 @@
+{% extends "_layouts/cp" %}
+
+{% set title = "Commerce Inights Highlights"|t('commerceinsights') %}
+
+{% block actionButton %}
+    {% set ranges = {
+                    'today': 'Today',
+                    'this-week': 'This week',
+                    'this-month': 'This month',
+                    'this-quarter': 'This quarter',
+                    'this-year': 'This year',
+                    'yesterday': 'Yesterday',
+                    'prev-week': 'Previous week',
+                    'prev-month': 'Previous month',
+                    'prev-quarter': 'Previous quarter',
+                    'prev-year': 'Previous year',
+                    '': 'Custom'
+                } %}
+    {% include "_includes/forms/select" with {name: "range", options: ranges, value: craft.request.getParam('range')} %}
+    {% include "_includes/forms/date" with {name: "start", value: craft.request.getParam('start')} %}
+    {% include "_includes/forms/date" with {name: "end", value: craft.request.getParam('end')} %}
+{% endblock %}
+
+{% block content %}
+    <div class="grid">
+        <div class="item" data-colspan="3" >
+            <div id="widget0" class="widget" data-id="0" >
+                <p>Today, you've generated <strong>$2,300</strong>. That's ${amount} and 00% more/less than this same day last week.</p>
+            </div>
+        </div>
+        <div class="item" data-colspan="1" >
+            <div id="widget1" class="widget" data-id="1" >
+                <div class="pane">
+                    <h2>Sales</h2>
+                    <h4>ORDERS LAST 30 DAYS</h4>
+                    <p>12324</p>
+                    <p><strong>Reports</strong></p>
+                    <ul>
+                        <li>Sales by month</li>
+                        <li>Sales by product</li>
+                        <li>Sales by product</li>
+                        <li>Sales by product</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="item" data-colspan="1" >
+            <div id="widget2" class="widget" data-id="2" >
+                <div class="pane">
+                    <h2>Customers</h2>
+                </div>
+            </div>
+        </div>
+        <div class="item" data-colspan="1" >
+            <div id="widget3" class="widget" data-id="3" >
+                <div class="pane">
+                    <h2>Products</h2>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+{% endblock %}
