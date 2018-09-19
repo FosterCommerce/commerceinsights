@@ -16,7 +16,8 @@
     "tightenco/collect": "^5.7"
   },
   "require-dev": {
-    "craftcms/cms": "^3.0.0"
+    "craftcms/cms": "^3.0.0",
+    "friendsofphp/php-cs-fixer": "^2.13"
   },
   "autoload": {
     "psr-4": {
