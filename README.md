@@ -6,8 +6,7 @@
 
 > *TODO*
 
-### Fixing formatting
+### Fix formatting
 ```bash
-$ yarn prettify
-$ ./scripts/php-fix.sh
+$ ./scripts/format.sh
 ```
