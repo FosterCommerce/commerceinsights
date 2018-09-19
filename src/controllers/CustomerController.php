@@ -11,7 +11,8 @@ use Tightenco\Collect\Support\Collection;
 use yii\web\Response;
 use craft\commerce\elements\Order;
 
-class CustomerController extends \craft\web\Controller {
+class CustomerController extends \craft\web\Controller
+{
 
     /** @var ParamParser */
     private $params;
@@ -68,5 +69,4 @@ class CustomerController extends \craft\web\Controller {
 
         return $this->renderTemplate('commerceinsights/customers/_index', $data);
     }
-
 }

@@ -40,7 +40,8 @@ class Plugin extends \craft\base\Plugin
     /**
      * @inheritdoc
      */
-    public function init() {
+    public function init()
+    {
         parent::init();
 
         $this->_registerCpRoutes();
@@ -49,12 +50,12 @@ class Plugin extends \craft\base\Plugin
             'paramParser' => \fostercommerce\commerceinsights\services\ParamParser::class,
         ]);
 
-        BaseFormatter::addFormatter( Revenue::class);
-        BaseFormatter::addFormatter( Orders::class);
-        BaseFormatter::addFormatter( Customers::class);
-        BaseFormatter::addFormatter( Products::class);
+        BaseFormatter::addFormatter(Revenue::class);
+        BaseFormatter::addFormatter(Orders::class);
+        BaseFormatter::addFormatter(Customers::class);
+        BaseFormatter::addFormatter(Products::class);
 
-        Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $e) {
+        Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function (Event $e) {
             /** @var CraftVariable $variable */
             $variable = $e->sender;
             $variable->set('url', Url::class);

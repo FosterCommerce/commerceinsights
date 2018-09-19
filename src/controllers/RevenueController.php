@@ -12,7 +12,8 @@ use Tightenco\Collect\Support\Collection;
 use yii\web\Response;
 use craft\commerce\elements\Order;
 
-class RevenueController extends \craft\web\Controller {
+class RevenueController extends \craft\web\Controller
+{
 
     /** @var ParamParser */
     private $params;
@@ -74,5 +75,4 @@ class RevenueController extends \craft\web\Controller {
 
         return $this->renderTemplate('commerceinsights/revenue/_index', $data);
     }
-
 }

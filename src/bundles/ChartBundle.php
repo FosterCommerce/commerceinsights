@@ -5,8 +5,8 @@ namespace fostercommerce\commerceinsights\bundles;
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
-class ChartBundle extends AssetBundle {
-
+class ChartBundle extends AssetBundle
+{
     public function init()
     {
         // define the path that your publishable resources live
@@ -24,5 +24,4 @@ class ChartBundle extends AssetBundle {
 
         parent::init();
     }
-
 }

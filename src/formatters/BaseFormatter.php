@@ -7,10 +7,10 @@ use fostercommerce\commerceinsights\Plugin;
 use fostercommerce\commerceinsights\services\ParamParser;
 use Tightenco\Collect\Support\Collection;
 
-abstract class BaseFormatter {
-
-    static $formatters = [];
-    static $key = false;
+abstract class BaseFormatter
+{
+    public static $formatters = [];
+    public static $key = false;
 
     /** @var ParamParser */
     protected $params;
@@ -31,7 +31,8 @@ abstract class BaseFormatter {
     /** @var Collection */
     protected $groupedData;
 
-    function __construct($data) {
+    public function __construct($data)
+    {
         $this->params = Plugin::getInstance()->paramParser;
         $this->min = $this->params->start();
         $this->max = $this->params->end();
@@ -47,7 +48,8 @@ abstract class BaseFormatter {
         ;
     }
 
-    static function addFormatter($formatter) {
+    public static function addFormatter($formatter)
+    {
         static::$formatters[$formatter::$key] = $formatter;
     }
 
@@ -55,7 +57,8 @@ abstract class BaseFormatter {
      * @param $key
      * @return BaseFormatter
      */
-    static function getFormatter($key) {
+    public static function getFormatter($key)
+    {
         if (!empty(static::$formatters[$key])) {
             return static::$formatters[$key];
         }
@@ -69,11 +72,13 @@ abstract class BaseFormatter {
      *
      * @return bool
      */
-    public function showsCurrency() {
+    public function showsCurrency()
+    {
         return $this->showsCurrency;
     }
 
-    function totals() {
+    public function totals()
+    {
         return [];
     }
 
@@ -83,8 +88,8 @@ abstract class BaseFormatter {
      *
      * @return Collection
      */
-    protected function getEmptyCollection() {
-
+    protected function getEmptyCollection()
+    {
         $empty = collect([]);
         $pointer = strtotime($this->max);
         while ($pointer > strtotime($this->min)) {
@@ -95,6 +100,5 @@ abstract class BaseFormatter {
         return $empty;
     }
 
-    abstract function format();
-
+    abstract public function format();
 }

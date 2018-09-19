@@ -6,7 +6,8 @@ use craft\events\RegisterUrlRulesEvent;
 use craft\web\UrlManager;
 use yii\base\Event;
 
-trait Routes {
+trait Routes
+{
 
     // Private Methods
     // =========================================================================
@@ -25,5 +26,4 @@ trait Routes {
             $event->rules['commerceinsights/customers/<format:csv>'] = 'commerceinsights/customer/customer-index';
         });
     }
-
 }

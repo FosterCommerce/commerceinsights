@@ -5,12 +5,15 @@ namespace fostercommerce\commerceinsights\formatters;
 use Craft;
 use Tightenco\Collect\Support\Collection;
 
-class Orders extends BaseFormatter {
-
+class Orders extends BaseFormatter
+{
     public static $key = 'orders';
 
-    function totals() {
-        $groups = $this->empty->merge($this->groupedData)->map(function ($group) { return $group->count(); });
+    public function totals()
+    {
+        $groups = $this->empty->merge($this->groupedData)->map(function ($group) {
+            return $group->count();
+        });
         $ordersPerDay = $groups->sum() / $groups->count();
 
         return collect([
@@ -22,7 +25,8 @@ class Orders extends BaseFormatter {
         ]);
     }
 
-    function format() {
+    public function format()
+    {
         return $this->empty->merge($this->groupedData)
             ->map(function (Collection $group, $key) {
                 return ['x' => $key, 'y' => $group->count()];
@@ -30,5 +34,4 @@ class Orders extends BaseFormatter {
             ->values()
             ->toArray();
     }
-
 }

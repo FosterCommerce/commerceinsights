@@ -11,7 +11,8 @@ use Tightenco\Collect\Support\Collection;
 use yii\web\Response;
 use craft\commerce\elements\Order;
 
-class HighlightsController extends \craft\web\Controller {
+class HighlightsController extends \craft\web\Controller
+{
 
     /** @var ParamParser */
     private $params;
@@ -68,5 +69,4 @@ class HighlightsController extends \craft\web\Controller {
 
         return $this->renderTemplate('commerceinsights/highlights/_index', $data);
     }
-
 }

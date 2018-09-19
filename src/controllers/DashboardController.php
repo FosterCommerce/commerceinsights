@@ -10,7 +10,8 @@ use Tightenco\Collect\Support\Collection;
 use yii\web\Response;
 use craft\commerce\elements\Order;
 
-class DashboardController extends \craft\web\Controller {
+class DashboardController extends \craft\web\Controller
+{
 
     /** @var ParamParser */
     private $params;
@@ -31,9 +32,6 @@ class DashboardController extends \craft\web\Controller {
      */
     public function actionDashboardIndex($format='html')
     {
-
         return $this->renderTemplate('commerceinsights/_index');
-        
     }
-
 }

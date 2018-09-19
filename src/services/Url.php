@@ -4,20 +4,23 @@ namespace fostercommerce\commerceinsights\services;
 
 use yii\base\Component;
 
-class Url extends Component {
-
+class Url extends Component
+{
     private $urlParts = [];
 
-    function __construct(array $config = []) {
+    public function __construct(array $config = [])
+    {
         parent::__construct($config);
         $this->urlParts = parse_url(\Craft::$app->request->absoluteUrl);
     }
 
-    function create() {
+    public function create()
+    {
         return new static;
     }
 
-    function __call($key, $args) {
+    public function __call($key, $args)
+    {
         $value = @$args[0];
 
         if ($value === null) {
@@ -38,12 +41,14 @@ class Url extends Component {
         return $this;
     }
 
-    function setPath($path) {
+    public function setPath($path)
+    {
         $this->urlParts['path'] = '/'.ltrim($path, '/');
         return $this;
     }
 
-    function query($key=null, $value=null) {
+    public function query($key=null, $value=null)
+    {
         if ($value !== null) {
             return $this->setQuery($key, $value);
         }
@@ -51,7 +56,8 @@ class Url extends Component {
         return $this->getQuery($key);
     }
 
-    function getQuery($key=null) {
+    public function getQuery($key=null)
+    {
         if ($key === null) {
             return $this->urlParts['query'];
         }
@@ -61,7 +67,8 @@ class Url extends Component {
         return @$params[$key];
     }
 
-    function setQuery($key, $value) {
+    public function setQuery($key, $value)
+    {
         $params = [];
         parse_str(@$this->urlParts['query'], $params);
 
@@ -71,7 +78,8 @@ class Url extends Component {
         return $this;
     }
 
-    function removeQuery($key) {
+    public function removeQuery($key)
+    {
         $params = [];
         parse_str(@$this->urlParts['query'], $params);
 
@@ -81,12 +89,14 @@ class Url extends Component {
         return $this;
     }
 
-    function removeAllQuery() {
+    public function removeAllQuery()
+    {
         unset($this->urlParts['query']);
         return $this;
     }
 
-    function unparseUrl() {
+    public function unparseUrl()
+    {
         $parts = $this->urlParts;
 
         $scheme   = isset($parts['scheme']) ? $parts['scheme'] . '://' : '';
@@ -101,16 +111,18 @@ class Url extends Component {
         return "$scheme$user$pass$host$port$path$query$fragment";
     }
 
-    function parts() {
+    public function parts()
+    {
         return $this->urlParts;
     }
 
-    function toString() {
+    public function toString()
+    {
         return (string)$this;
     }
 
-    function __toString() {
+    public function __toString()
+    {
         return $this->unparseUrl();
     }
-
 }

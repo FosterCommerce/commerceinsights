@@ -1,12 +1,20 @@
 {
   "name": "fostercommerce/commerceinsights",
   "description": "",
+  "homepage": "https://github.com/fostercommerce/commerceinsights",
   "type": "craft-plugin",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "keywords": [
     "commerce"
   ],
-  "authors": [],
+  "authors": [{
+    "name": "Foster Commerce",
+    "homepage": "https://fostercommerce.com"
+  }],
+  "require": {
+    "nesbot/carbon": "^1.33",
+    "tightenco/collect": "^5.7"
+  },
   "require-dev": {
     "craftcms/cms": "^3.0.0"
   },
@@ -18,14 +26,10 @@
   "extra": {
     "handle": "commerceinsights",
     "name": "Commerce Insights",
-    "developer": "",
+    "developer": "Foster Commerce",
     "hasCpSettings": false,
     "hasCpSection": true,
     "changelogUrl": "",
     "schemaVersion": "1.0.0"
-  },
-  "require": {
-    "tightenco/collect": "^5.6",
-    "nesbot/carbon": "^1.33"
   }
 }
