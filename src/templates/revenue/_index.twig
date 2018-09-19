@@ -2,6 +2,7 @@
 {%- from "_includes/forms" import text -%}
 
 {% set title = "Revenue"|t('commerceinsights') %}
+{% set selectedSubnavItem = "revenue" %}
 {% set url = craft.url.create %}
 
 {% block sidebar %}
@@ -37,7 +38,7 @@
 
 {% block content %}
     <div class="ci-spacing">
-        
+
 
         {% if totals %}
             <ul class="ci-totals">
