@@ -49,16 +49,17 @@ const loadData = () => {
   const formatter = document.querySelector('*[name="formatter"]').value
   const startDate = moment($('[name="start[date]"]').datepicker('getDate'))
     .startOf('day')
-    .toISOString()
+    .toISOString(true)
   const endDate = moment($('[name="end[date]"]').datepicker('getDate'))
     .endOf('day')
-    .toISOString()
+    .toISOString(true)
 
   const params = {
     start: startDate,
     end: endDate,
     q: select('*[name="q"]').value,
   }
+
   const queryString = qs.stringify(params)
 
   const requestUrl = `/admin/commerceinsights/${formatter}?${queryString}`
