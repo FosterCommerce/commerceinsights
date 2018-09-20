@@ -1,18 +1,25 @@
 {% extends "_layouts/cp" %}
 {%- from "_includes/forms" import text -%}
 
-{% set title = "Revenue"|t('commerceinsights') %}
+{% set title = "Revenue" | t('commerceinsights') %}
 {% set selectedSubnavItem = "revenue" %}
 {% set url = craft.url.create %}
 
 {% block sidebar %}
     <nav>
-        <ul>
-            <li><a href="{{ url.query('formatter', 'revenue') }}" data-dynamic-link='{"query":{"formatter":"revenue"}}' {{ formatter == 'revenue' ? 'class="sel"' }}>Selected Date Range</a></li>
-            <li><a href="{{ url.query('formatter', 'revenue') }}" data-dynamic-link='{"query":{"formatter":"revenue"}}' {{ formatter == 'revenue' ? 'class="sel"' }}>Today</a></li>
-            <li><a href="{{ url.query('formatter', 'revenue') }}" data-dynamic-link='{"query":{"formatter":"revenue"}}' {{ formatter == 'revenue' ? 'class="sel"' }}>This Week</a></li>
-            <li><a href="{{ url.query('formatter', 'revenue') }}" data-dynamic-link='{"query":{"formatter":"revenue"}}' {{ formatter == 'revenue' ? 'class="sel"' }}>This Month</a></li>
-            <li><a href="{{ url.query('formatter', 'revenue') }}" data-dynamic-link='{"query":{"formatter":"revenue"}}' {{ formatter == 'revenue' ? 'class="sel"' }}>This Year</a></li>
+        <ul id="sidebar-ranges">
+            <li>
+                <a href="#" data-range="today">Today</a>
+            </li>
+            <li>
+                <a href="#" data-range="this-week">This Week</a>
+            </li>
+            <li>
+                <a href="#" data-range="this-month">This Month</a>
+            </li>
+            <li>
+                <a href="#" data-range="this-year">This Year</a>
+            </li>
         </ul>
     </nav>
 {% endblock %}
@@ -31,20 +38,32 @@
                     'prev-year': 'Previous year',
                     '': 'Custom'
                 } %}
-    {% include "_includes/forms/select" with {name: "range", options: ranges, value: craft.request.getParam('range')} %}
-    {% include "_includes/forms/date" with {name: "start", value: craft.request.getParam('start')} %}
-    {% include "_includes/forms/date" with {name: "end", value: craft.request.getParam('end')} %}
+    {% include "_includes/forms/select" with {
+        id : "range",
+        name: "range",
+        options: ranges,
+        value: craft.request.getParam('range')
+    } %}
+    {% include "_includes/forms/date" with {
+        id : "rangeStart",
+        name: "start",
+        value: craft.request.getParam('start')
+    } %}
+    {% include "_includes/forms/date" with {
+        id : "rangeEnd",
+        name: "end",
+        value: craft.request.getParam('end')
+    } %}
 {% endblock %}
 
 {% block content %}
     <div class="ci-spacing">
-
-
         {% if totals %}
             <ul class="ci-totals">
                 {% for key, value in totals %}
                     <li>
-                        <div class="ci-total-label">{{ key }}</div> <strong class="ci-total-value">{{ value }}</strong>
+                        <div class="ci-total-label">{{ key }}</div>
+                        <strong class="ci-total-value">{{ value }}</strong>
                     </li>
                 {% endfor %}
             </ul>
@@ -65,6 +84,8 @@
                 }) }}
             </div>
             <div class="ci-action-actions">
+                <input type="hidden" name="startDate" value=""/>
+                <input type="hidden" name="endDate" value=""/>
                 <input type="submit" class="btn submit" value="Search">
                 <a href="{{ craft.url.create.path('/admin/commerceinsights/csv') }}" data-dynamic-link='{"path":"/admin/commerceinsights/csv"}' class="btn">Export</a>
             </div>

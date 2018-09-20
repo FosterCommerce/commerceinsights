@@ -41,7 +41,7 @@ class RevenueController extends \craft\web\Controller
 
         $query = Order::find()
             ->isCompleted(true)
-            ->dateOrdered(['and', ">{$min}", "<{$max}"])
+            ->dateOrdered(['and', ">={$min}", "<={$max}"])
             ->orderBy(implode(' ', [Craft::$app->request->getParam('sort') ?: 'dateOrdered', Craft::$app->request->getParam('dir') ?: 'asc']));
 
         $q = Craft::$app->request->getParam('q');

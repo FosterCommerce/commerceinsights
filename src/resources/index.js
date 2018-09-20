@@ -1,7 +1,9 @@
-import Chart from './Chart'
 import axios from 'axios'
 import qs from 'qs'
-import qsUtils from 'qs/lib/utils'
+import moment from 'moment'
+import Chart from './Chart'
+import getDateRange from './getDateRange'
+import { select, selectAll } from './utils'
 
 const el = document.getElementById('chart')
 const chartData = JSON.parse(el.dataset.chartData)
@@ -16,41 +18,53 @@ chart.max(chartEnd)
 chart.currency(chartShowsCurrency)
 chart.draw()
 
-// When the range changes submit the data
-document.addEventListener('change', function(event) {
-  if (event.target.name !== 'range') {
-    return
-  }
+const setDates = value => {
+  const range = getDateRange(value)
+  const startDate = $('[name="start[date]"]')
+  const endDate = $('[name="end[date]"]')
+  startDate.datepicker('setDate', range[0])
+  endDate.datepicker('setDate', range[1])
 
-  document.querySelector(
-    'label[for="filter-toggle"]',
-  ).innerHTML = event.target.querySelector('option:checked').innerHTML
+  loadData()
+}
 
-  event.target.form.querySelector('*[type="submit"]').click()
+selectAll('#sidebar-ranges a').forEach(el =>
+  el.addEventListener('click', event => {
+    const current = select('#sidebar-ranges a.sel')
+    if (current) {
+      current.classList.toggle('sel')
+    }
+    event.target.classList.toggle('sel')
+
+    setDates(event.target.dataset.range)
+  }),
+)
+
+select('#range').addEventListener('change', () => {
+  const value = select('#range option:checked').value
+  setDates(value)
 })
 
-document.addEventListener('submit', function(event) {
-  // make sure it's the right form
-  if (!event.target.classList.contains('ci-actions')) {
-    return
+const loadData = () => {
+  const formatter = document.querySelector('*[name="formatter"]').value
+  const startDate = moment($('[name="start[date]"]').datepicker('getDate'))
+    .startOf('day')
+    .toISOString()
+  const endDate = moment($('[name="end[date]"]').datepicker('getDate'))
+    .endOf('day')
+    .toISOString()
+
+  const params = {
+    start: startDate,
+    end: endDate,
+    q: select('*[name="q"]').value,
   }
-
-  // stop form submission, for ajax
-  event.preventDefault()
-
-  // bundle up the form data
-  let params = {}
-  params.formatter = document.querySelector('*[name="formatter"]').value
-  params.range = document.querySelector('*[name="range"]').value
-  params.start = document.querySelector('*[name="start[date]"]').value
-  params.end = document.querySelector('*[name="end[date]"]').value
-  params.q = document.querySelector('*[name="q"]').value
   const queryString = qs.stringify(params)
 
-  // submit the data
+  const requestUrl = `/admin/commerceinsights/${formatter}?${queryString}`
   const headers = { 'X-Requested-With': 'XMLHttpRequest' }
   axios
-    .get('/admin/commerceinsights?' + queryString, { headers })
+    .get(`${requestUrl}&format=json`, { headers })
     .then(function(res) {
       chart.data(res.data.chartData)
       chart.min(res.data.min)
@@ -64,17 +78,17 @@ document.addEventListener('submit', function(event) {
       for (const key in res.data.totals) {
         const value = res.data.totals[key]
         totalsHTML += `<li>
-                    <div class="ci-total-label">${key}</div> <strong class="ci-total-value">${value}</strong>
-                </li>`
+    <div class="ci-total-label">${key}</div> <strong class="ci-total-value">${value}</strong>
+</li>`
       }
       document.querySelector('.ci-totals').innerHTML = totalsHTML
     })
     .catch(function(err) {
+      // TODO: Handle this
       console.log('ERR', err)
     })
     .finally(function() {
-      document.querySelector('#filter-toggle').checked = false
-      history.replaceState({}, '', '/admin/commerceinsights?' + queryString)
+      history.replaceState({}, '', requestUrl)
 
       const links = document.querySelectorAll('[data-dynamic-link]')
       links.forEach(function(link) {
@@ -93,4 +107,9 @@ document.addEventListener('submit', function(event) {
         link.setAttribute('href', path + '?' + query)
       })
     })
+}
+
+select('.ci-actions').addEventListener('submit', function(event) {
+  event.preventDefault()
+  loadData()
 })

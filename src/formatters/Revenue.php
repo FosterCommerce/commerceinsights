@@ -15,7 +15,8 @@ class Revenue extends BaseFormatter
         $groups = $this->empty->merge($this->groupedData)->map(function ($group) {
             return $group->sum('totalPaid');
         });
-        $ordersPerDay = $groups->sum() / $groups->count();
+        $count = $groups->count();
+        $ordersPerDay = $groups->sum() / ($count > 0 ? $count : 1);
 
         return collect([
             'Total' => Craft::$app->getFormatter()->asCurrency($this->data->sum('totalPaid')),
