@@ -12,9 +12,7 @@ const chartEnd = el.dataset.chartEnd
 const chartShowsCurrency = el.dataset.chartShowsCurrency
 
 const chart = new Chart(el)
-chart.data(chartData)
-chart.min(chartStart)
-chart.max(chartEnd)
+chart.update(chartStart, chartEnd, chartData)
 chart.currency(chartShowsCurrency)
 chart.draw()
 
@@ -67,9 +65,7 @@ const loadData = () => {
   axios
     .get(`${requestUrl}&format=json`, { headers })
     .then(function(res) {
-      chart.data(res.data.chartData)
-      chart.min(res.data.min)
-      chart.max(res.data.max)
+      chart.update(res.data.min, res.data.max, res.data.chartData)
       chart.currency(res.data.chartShowsCurrency)
       chart.draw()
 

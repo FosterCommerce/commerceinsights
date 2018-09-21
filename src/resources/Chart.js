@@ -1,5 +1,40 @@
 import Chart from 'chart.js'
 import moment from 'moment'
+import groupBy from 'ramda/src/groupBy'
+
+const calculateInterval = (min, max, iso = false) => {
+  const duration = moment.duration(max.diff(min))
+  const days = duration.asDays()
+  const months = duration.asMonths()
+
+  if (days <= 2) {
+    return iso ? 'isoHour' : 'hour'
+  } else if (days > 2 && months <= 2) {
+    return iso ? 'isoDay' : 'day'
+  } else if (months > 2 && months <= 6) {
+    return iso ? 'isoWeek' : 'week'
+  }
+
+  return iso ? 'isoMonth' : 'month'
+}
+
+const groupData = (min, max, data) => {
+  const interval = calculateInterval(min, max)
+  const groupedResults = groupBy(
+    day =>
+      moment(day.x, 'YYYY-MM-DD hh:mm:ss')
+        .startOf(interval)
+        .toISOString(),
+    data,
+  )
+
+  const result = Object.keys(groupedResults).map(key => ({
+    x: key,
+    y: groupedResults[key].reduce((acc, result) => acc + result.y, 0),
+  }))
+
+  return result
+}
 
 export default class SomeChartLib {
   constructor(el) {
@@ -10,16 +45,10 @@ export default class SomeChartLib {
     this._currency = false
   }
 
-  data(data) {
-    this._data = data
-  }
-
-  min(min) {
+  update(min, max, data) {
     this._min = moment(min)
-  }
-
-  max(max) {
     this._max = moment(max)
+    this._data = groupData(this._min, this._max, data)
   }
 
   currency(currency) {
@@ -35,8 +64,10 @@ export default class SomeChartLib {
       this.chartObj.data.datasets[0].data = this._data
       this.chartObj.options.scales.xAxes[0].time.min = this._min.toISOString()
       this.chartObj.options.scales.xAxes[0].time.max = this._max.toISOString()
-      this.chartObj.options.scales.xAxes[0].time.unit =
-        moment.duration(this._max.diff(this._min)).asDays() > 2 ? 'day' : 'hour'
+      this.chartObj.options.scales.xAxes[0].time.unit = calculateInterval(
+        this._min,
+        this._max,
+      )
       this.chartObj.update()
 
       return
@@ -72,10 +103,7 @@ export default class SomeChartLib {
               time: {
                 min: this._min.toISOString(),
                 max: this._max.toISOString(),
-                unit:
-                  moment.duration(this._max.diff(this._min)).asDays() > 2
-                    ? 'day'
-                    : 'hour',
+                unit: calculateInterval(this._min, this._max),
               },
             },
           ],
