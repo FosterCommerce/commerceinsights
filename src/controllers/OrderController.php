@@ -68,7 +68,6 @@ class OrderController extends \craft\web\Controller
         }
 
         if ($format == 'csv') {
-            header('Content-type: text/csv');
             return $this->renderTemplate('commerceinsights/_csv', ['data' => $rows]);
         }
 

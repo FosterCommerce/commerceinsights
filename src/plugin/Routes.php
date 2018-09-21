@@ -18,6 +18,7 @@ trait Routes
             $event->rules['commerceinsights'] = 'commerceinsights/dashboard/dashboard-index';
             $event->rules['commerceinsights/revenue'] = 'commerceinsights/revenue/revenue-index';
             $event->rules['commerceinsights/revenue/<format:json>'] = 'commerceinsights/revenue/revenue-index';
+            $event->rules['commerceinsights/revenue/<format:csv>'] = 'commerceinsights/revenue/revenue-index';
             $event->rules['commerceinsights/orders'] = 'commerceinsights/order/order-index';
             $event->rules['commerceinsights/orders/<format:json>'] = 'commerceinsights/order/order-index';
             $event->rules['commerceinsights/products'] = 'commerceinsights/product/product-index';
