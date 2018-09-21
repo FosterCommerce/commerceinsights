@@ -6,7 +6,7 @@
 
 > *TODO*
 
-### Build front-end
+### Build front-end for production
 
 ```bash
 $ yarn build
@@ -15,7 +15,7 @@ $ yarn build
 #### Watch mode
 
 ```bash
-$ yarn build --watch
+$ yarn dev
 ```
 
 ### Fix formatting

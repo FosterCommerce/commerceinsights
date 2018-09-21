@@ -4,18 +4,22 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "webpack",
+    "build": "cross-env NODE_ENV=production webpack",
+    "dev": "webpack --watch",
     "prettify": "prettier --write src/resources/**/*.js"
   },
   "dependencies": {
     "axios": "^0.18.0",
     "chart.js": "^2.7.2",
     "moment": "^2.22.2",
-    "qs": "^6.5.2"
+    "qs": "^6.5.2",
+    "ramda": "^0.25.0"
   },
   "devDependencies": {
+    "cross-env": "^5.2.0",
     "prettier": "^1.14.2",
     "webpack": "^4.16.5",
+    "webpack-bundle-analyzer": "^3.0.2",
     "webpack-cli": "^3.1.0"
   }
 }
