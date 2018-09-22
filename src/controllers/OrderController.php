@@ -5,6 +5,7 @@ namespace fostercommerce\commerceinsights\controllers;
 use Craft;
 use fostercommerce\commerceinsights\bundles\ChartBundle;
 use fostercommerce\commerceinsights\formatters\BaseFormatter;
+use fostercommerce\commerceinsights\formatters\Orders;
 use fostercommerce\commerceinsights\Plugin;
 use fostercommerce\commerceinsights\services\ParamParser;
 use Tightenco\Collect\Support\Collection;
@@ -50,7 +51,7 @@ class OrderController extends \craft\web\Controller
 
         $rows = collect($query->all());
 
-        $formatterClass = BaseFormatter::getFormatter(Craft::$app->request->getParam('formatter'));
+        $formatterClass = BaseFormatter::getFormatter(Orders::class);
         $formatter = new $formatterClass($rows);
 
         $data = [

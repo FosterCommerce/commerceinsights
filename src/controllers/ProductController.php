@@ -5,6 +5,7 @@ namespace fostercommerce\commerceinsights\controllers;
 use Craft;
 use fostercommerce\commerceinsights\bundles\ChartBundle;
 use fostercommerce\commerceinsights\formatters\BaseFormatter;
+use fostercommerce\commerceinsights\formatters\Products;
 use fostercommerce\commerceinsights\Plugin;
 use fostercommerce\commerceinsights\services\ParamParser;
 use Tightenco\Collect\Support\Collection;

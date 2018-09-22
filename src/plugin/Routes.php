@@ -21,9 +21,12 @@ trait Routes
             $event->rules['commerceinsights/revenue/<format:csv>'] = 'commerceinsights/revenue/revenue-index';
             $event->rules['commerceinsights/orders'] = 'commerceinsights/order/order-index';
             $event->rules['commerceinsights/orders/<format:json>'] = 'commerceinsights/order/order-index';
+            $event->rules['commerceinsights/orders/<format:csv>'] = 'commerceinsights/order/order-index';
             $event->rules['commerceinsights/products'] = 'commerceinsights/product/product-index';
+            $event->rules['commerceinsights/products/<format:json>'] = 'commerceinsights/product/product-index';
             $event->rules['commerceinsights/products/<format:csv>'] = 'commerceinsights/product/product-index';
             $event->rules['commerceinsights/customers'] = 'commerceinsights/customer/customer-index';
+            $event->rules['commerceinsights/customers/<format:json>'] = 'commerceinsights/customer/customer-index';
             $event->rules['commerceinsights/customers/<format:csv>'] = 'commerceinsights/customer/customer-index';
         });
     }
