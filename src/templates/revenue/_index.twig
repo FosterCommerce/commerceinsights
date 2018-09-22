@@ -58,6 +58,10 @@
 
 {% block content %}
     <div class="ci-spacing">
+        <h2>Everything</h2>
+
+        <p>For {start date} - {end date}, your revenue for {group} is {dollar amount}. That's up/down {difference dollar amount} ({percentage}) when compared to the previous period.
+        
         {% if totals %}
             <ul class="ci-totals">
                 {% for key, value in totals %}
@@ -80,19 +84,57 @@
                 {{ text({
                     name: "q",
                     value: craft.request.getParam('q'),
-                    placeholder: "Search"|t('app')
+                    placeholder: "Search"|t('app'),
+                    type: "hidden"
                 }) }}
             </div>
             <div class="ci-action-actions">
                 <input type="hidden" name="startDate" value=""/>
                 <input type="hidden" name="endDate" value=""/>
-                <input type="submit" class="btn submit" value="Search">
-                <a href="{{ craft.url.create.path('/admin/commerceinsights/revenue/csv') }}" data-dynamic-link='{"path":"/admin/commerceinsights/revenue/csv"}' class="btn">Export</a>
             </div>
         </form>
 
-        <div class="elements">
-            {{ chartTable|raw }}
-        </div>
+        
     </div>
+
+    {# Future
+
+    <div class="ci-spacing">
+        <h2>Revenue by {group}</h2>
+
+        <p>For {start date} - {end date}, your revenue for {group} is {dollar amount}. That's up/down {difference dollar amount} ({percentage}) when compared to the previous period and up/down {difference dollar amount} ({percentage}) when compared to the previous year.
+        
+        {% if totals %}
+            <ul class="ci-totals">
+                {% for key, value in totals %}
+                    <li>
+                        <div class="ci-total-label">{{ key }}</div>
+                        <strong class="ci-total-value">{{ value }}</strong>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="chart">
+            <canvas id="chart" width="900" height="300" data-chart-data="{{ chartData|json_encode }}" data-chart-start="{{ min }}" data-chart-end="{{ max }}" data-chart-shows-currency="{{ chartShowsCurrency }}"></canvas>
+        </div>
+
+        <form method="get" class="ci-actions">
+            <input type="hidden" name="formatter" value="{{ formatter }}">
+
+            <div class="ci-action-search">
+                {{ text({
+                    name: "q",
+                    value: craft.request.getParam('q'),
+                    placeholder: "Search"|t('app'),
+                    type: "hidden"
+                }) }}
+            </div>
+            <div class="ci-action-actions">
+                <input type="hidden" name="startDate" value=""/>
+                <input type="hidden" name="endDate" value=""/>
+            </div>
+        </form>
+
+    </div> #}
 {% endblock %}

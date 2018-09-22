@@ -40,7 +40,7 @@ class OrderController extends \craft\web\Controller
 
         $query = Order::find()
             ->isCompleted(true)
-            ->dateOrdered(['and', ">{$min}", "<{$max}"])
+            ->dateOrdered(['and', ">={$min}", "<={$max}"])
             ->orderBy(implode(' ', [Craft::$app->request->getParam('sort') ?: 'dateOrdered', Craft::$app->request->getParam('dir') ?: 'asc']));
 
         $q = Craft::$app->request->getParam('q');
@@ -68,6 +68,7 @@ class OrderController extends \craft\web\Controller
         }
 
         if ($format == 'csv') {
+            header('Content-type: text/csv');
             return $this->renderTemplate('commerceinsights/_csv', ['data' => $rows]);
         }
 
