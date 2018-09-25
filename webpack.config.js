@@ -10,6 +10,7 @@ module.exports = {
         filename: isProduction ? 'bundle.min.js' : 'bundle.js'
     },
     mode: isProduction ? 'production' : 'development',
+    devtool: !isProduction && 'eval-source-map',
     plugins: [
       new BundleAnalyzerPlugin({
         analyzerMode: 'static',

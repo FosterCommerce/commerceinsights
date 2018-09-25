@@ -81,6 +81,7 @@ export default class SomeChartLib {
             label: '',
             lineTension: 0,
             data: this._data,
+            backgroundColor: '#36a2eb',
           },
         ],
       },
