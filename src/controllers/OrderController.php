@@ -42,7 +42,12 @@ class OrderController extends \craft\web\Controller
         $query = Order::find()
             ->isCompleted(true)
             ->dateOrdered(['and', ">={$min}", "<={$max}"])
-            ->orderBy(implode(' ', [Craft::$app->request->getParam('sort') ?: 'dateOrdered', Craft::$app->request->getParam('dir') ?: 'asc']));
+            ->orderBy(
+                implode(' ', [
+                    Craft::$app->request->getParam('sort') ?: 'dateOrdered',
+                    Craft::$app->request->getParam('dir') ?: 'asc'
+                    ])
+            );
 
         $q = Craft::$app->request->getParam('q');
         if (!empty($q)) {

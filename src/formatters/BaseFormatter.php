@@ -44,8 +44,7 @@ abstract class BaseFormatter
         $this->groupedData = $this->data
             ->mapToGroups(function ($item) {
                 return [$item->dateOrdered->format($this->stepFormat) => $item];
-            })
-        ;
+            });
     }
 
     public static function addFormatter($formatter)
@@ -57,8 +56,9 @@ abstract class BaseFormatter
      * @param $key
      * @return BaseFormatter
      */
-    public static function getFormatter($key)
+    public static function getFormatter($formatter)
     {
+        $key = $formatter::$key;
         if (!empty(static::$formatters[$key])) {
             return static::$formatters[$key];
         }

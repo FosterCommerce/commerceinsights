@@ -12,9 +12,10 @@ class ParamParser extends Component
 
     public function __construct()
     {
-        $start = \Craft::$app->request->getParam('start');
-        $end = \Craft::$app->request->getParam('end');
-        $range = \Craft::$app->request->getParam('range') ?: 7 * 24 * 60 * 60 /* 7 days */;
+        $request = \Craft::$app->request;
+        $start = $request->getParam('start');
+        $end = $request->getParam('end');
+        $range = $request->getParam('range') ?: 7 * 24 * 60 * 60 /* 7 days */;
 
         if ($start && $end) {
             $this->start = date('Y-m-d\TH:i:s', strtotime($start));
@@ -48,9 +49,13 @@ class ParamParser extends Component
         return $this->step;
     }
 
-    public function stepFormat()
+    public function stepFormat($hours = true)
     {
-        return $this->step == 60 * 60 ? 'Y-m-d H:00:00' : 'Y-m-d 00:00:00';
+        if ($hours) {
+            return $this->step == 60 * 60 ? 'Y-m-d H:00:00' : 'Y-m-d 00:00:00';
+        }
+
+        return 'Y-m-d 00:00:00';
     }
 
     /**
