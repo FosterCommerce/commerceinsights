@@ -6,6 +6,7 @@ use Craft;
 use fostercommerce\commerceinsights\Plugin;
 use fostercommerce\commerceinsights\services\ParamParser;
 use Tightenco\Collect\Support\Collection;
+use yii\web\HttpException;
 
 abstract class BaseFormatter
 {
@@ -58,13 +59,16 @@ abstract class BaseFormatter
      */
     public static function getFormatter($formatter)
     {
-        $key = $formatter::$key;
+        if (is_null($formatter)) {
+            throw new HttpException(400, 'Invalid formatter');
+        }
+
+        $key = class_exists($formatter) ? $formatter::$key : $formatter;
         if (!empty(static::$formatters[$key])) {
             return static::$formatters[$key];
         }
 
-        $keys = array_keys(static::$formatters);
-        return static::$formatters[$keys[0]];
+        throw new HttpException(501, 'Invalid formatter');
     }
 
     /**

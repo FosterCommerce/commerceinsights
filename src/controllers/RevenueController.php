@@ -51,7 +51,7 @@ class RevenueController extends \craft\web\Controller
 
         $rows = collect($query->all());
 
-        $formatterClass = BaseFormatter::getFormatter(Craft::$app->request->getParam('formatter'));
+        $formatterClass = BaseFormatter::getFormatter(Revenue::class);
         $formatter = new $formatterClass($rows);
 
         $data = [
