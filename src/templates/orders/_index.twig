@@ -41,11 +41,6 @@
     <div class="ci-spacing">
 
         <form method="get" class="ci-actions" style="clear: both;">
-
-            {#
-                The global date selection should carry over to every view.
-                The date selection is incorrectly redirecting to /revenue URL.
-            #}
             <input type="hidden" name="formatter" value="{{ formatter }}">
 
             <div class="select">
@@ -59,7 +54,7 @@
             <div class="ci-action-search">
                 {#
                     We want to add ability to search beyond the Commerce Order model.
-                    For example, we want to search by product name, SKU, category, shipping method, coupon code, etc. 
+                    For example, we want to search by product name, SKU, category, shipping method, coupon code, etc.
                 #}
                 {{ text({
                     name: "q",
@@ -70,18 +65,12 @@
             <div class="ci-action-actions">
                 <input type="hidden" name="startDate" value=""/>
                 <input type="hidden" name="endDate" value=""/>
-                {# Todo: 
-                    - Remove search button and have search results auto submit after a slight delay, just like we see elsewhere in Craft
-                    - Fix CSV for Orders results
-                #}
-                <input type="submit" class="btn submit" value="Search">
-
                 <a href="{{ craft.url.create.path('/admin/commerceinsights/orders/csv') }}" data-dynamic-link='{"path":"/admin/commerceinsights/orders/csv"}' class="btn">Export</a>
             </div>
         </form>
 
         {% if totals %}
-            {# 
+            {#
                 We should see '# of Orders', 'AOV (average order value)', 'Total Revenue (totalPaid)'
             #}
             <ul class="ci-totals" style="float: left; width: calc(30% - 20px); padding-right: 2%; display: block">
@@ -99,7 +88,7 @@
         </div>
 
         <div class="elements">
-            {# 
+            {#
                 The following column data should be clickable.
                 - Status: when clicked, update data to filter by status with other current search values, if possible.
                 - Email: when clicked, update data to filter by that email address. Maybe we can eventually add separate link to open customer's detail page.

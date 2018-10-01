@@ -94,6 +94,8 @@ $(function() {
       })
   }
 
+  select('[name="q"]').addEventListener('input', debounce(loadData, 2000))
+
   selectAll('[name="start[date]"],[name="end[date]"]').forEach(el => {
     const debouncedLoad = debounce(loadData, 2000)
     $(el).datepicker('option', {
