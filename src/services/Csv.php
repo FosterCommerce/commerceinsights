@@ -8,9 +8,8 @@ use League\Csv\Writer;
 
 class Csv extends Component
 {
-   public function generate($module, $data)
+    public function generate($module, $data)
     {
-
         $csv = Writer::createFromString('');
         // Always output a CSV, whether its empty or not
         if (sizeof($data) > 0) {

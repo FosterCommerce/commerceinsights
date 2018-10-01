@@ -5,6 +5,25 @@
 {% set selectedSubnavItem = "orders" %}
 {% set url = craft.url.create %}
 
+{% css %}
+.summary-header {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr 2fr;
+}
+.ci-totals {
+  margin-right: 2%;
+  display: block;
+}
+.ci-totals li {
+  padding: 16px 0;
+}
+.chart {
+  margin-right: 0;
+  padding-left: 2%;
+}
+{% endcss %}
+
 {% block actionButton %}
     {% set ranges = {
                     'today': 'Today',
@@ -40,7 +59,7 @@
 {% block content %}
     <div class="ci-spacing">
 
-        <form method="get" class="ci-actions" style="clear: both;">
+        <form method="get" class="ci-actions">
             <input type="hidden" name="formatter" value="{{ formatter }}">
 
             <div class="select">
@@ -69,22 +88,24 @@
             </div>
         </form>
 
-        {% if totals %}
-            {#
-                We should see '# of Orders', 'AOV (average order value)', 'Total Revenue (totalPaid)'
-            #}
-            <ul class="ci-totals" style="float: left; width: calc(30% - 20px); padding-right: 2%; display: block">
-                {% for key, value in totals %}
-                    <li style="padding: 16px 0">
-                        <div class="ci-total-label">{{ key }}</div>
-                        <strong class="ci-total-value">{{ value }}</strong>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        <div class="summary-header">
+          {% if totals %}
+              {#
+                  We should see '# of Orders', 'AOV (average order value)', 'Total Revenue (totalPaid)'
+              #}
+              <ul class="ci-totals">
+                  {% for key, value in totals %}
+                      <li>
+                          <div class="ci-total-label">{{ key }}</div>
+                          <strong class="ci-total-value">{{ value }}</strong>
+                      </li>
+                  {% endfor %}
+              </ul>
+          {% endif %}
 
-        <div class="chart" style="float: right; width: 66%; padding-left: 2%">
-            <canvas id="chart" width="900" height="500" data-chart-data="{{ chartData|json_encode }}" data-chart-start="{{ min }}" data-chart-end="{{ max }}" data-chart-shows-currency="{{ chartShowsCurrency }}"></canvas>
+          <div class="chart">
+              <canvas id="chart" data-chart-data="{{ chartData|json_encode }}" data-chart-start="{{ min }}" data-chart-end="{{ max }}" data-chart-shows-currency="{{ chartShowsCurrency }}"></canvas>
+          </div>
         </div>
 
         <div class="elements">
