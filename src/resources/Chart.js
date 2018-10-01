@@ -1,6 +1,6 @@
 import Chart from 'chart.js'
 import moment from 'moment'
-import groupBy from 'ramda/src/groupBy'
+import groupBy from 'lodash/groupBy'
 
 const calculateInterval = (min, max, iso = false) => {
   const duration = moment.duration(max.diff(min))
@@ -20,12 +20,10 @@ const calculateInterval = (min, max, iso = false) => {
 
 const groupData = (min, max, data) => {
   const interval = calculateInterval(min, max)
-  const groupedResults = groupBy(
-    day =>
-      moment(day.x, 'YYYY-MM-DD hh:mm:ss')
-        .startOf(interval)
-        .toISOString(),
-    data,
+  const groupedResults = groupBy(data, day =>
+    moment(day.x, 'YYYY-MM-DD hh:mm:ss')
+      .startOf(interval)
+      .toISOString(),
   )
 
   const result = Object.keys(groupedResults).map(key => ({
@@ -81,6 +79,7 @@ export default class SomeChartLib {
             label: '',
             lineTension: 0,
             data: this._data,
+            backgroundColor: '#36a2eb',
           },
         ],
       },

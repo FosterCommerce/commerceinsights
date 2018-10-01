@@ -2,6 +2,7 @@
 
 namespace fostercommerce\commerceinsights\services;
 
+use Craft;
 use yii\base\Component;
 
 class ParamParser extends Component
@@ -12,16 +13,29 @@ class ParamParser extends Component
 
     public function __construct()
     {
-        $start = \Craft::$app->request->getParam('start');
-        $end = \Craft::$app->request->getParam('end');
-        $range = \Craft::$app->request->getParam('range') ?: 7 * 24 * 60 * 60 /* 7 days */;
+        $session = Craft::$app->getSession();
+        $request = \Craft::$app->request;
+        $start = $request->getParam('start');
+        $end = $request->getParam('end');
+        $range = $request->getParam('range') ?: 7 * 24 * 60 * 60 /* 7 days */;
 
         if ($start && $end) {
             $this->start = date('Y-m-d\TH:i:s', strtotime($start));
             $this->end = date('Y-m-d\TH:i:s', strtotime($end));
+
+            $session->set('commerceinsights_start_date', $start);
+            $session->set('commerceinsights_end_date', $end);
         } else {
-            $this->start = date('Y-m-d\TH:i:s', strtotime("-{$range} seconds"));
-            $this->end = date('Y-m-d\TH:i:s');
+            $sessionStart = $session->get('commerceinsights_start_date');
+            $sessionEnd = $session->get('commerceinsights_end_date');
+
+            if ($sessionStart && $sessionEnd) {
+                $this->start = date('Y-m-d\TH:i:s', strtotime($sessionStart));
+                $this->end = date('Y-m-d\TH:i:s', strtotime($sessionEnd));
+            } else {
+                $this->start = date('Y-m-d\TH:i:s', strtotime("-{$range} seconds"));
+                $this->end = date('Y-m-d\TH:i:s');
+            }
         }
 
         $duration = strtotime($this->end) - strtotime($this->start);
@@ -48,9 +62,13 @@ class ParamParser extends Component
         return $this->step;
     }
 
-    public function stepFormat()
+    public function stepFormat($hours = true)
     {
-        return $this->step == 60 * 60 ? 'Y-m-d H:00:00' : 'Y-m-d 00:00:00';
+        if ($hours) {
+            return $this->step == 60 * 60 ? 'Y-m-d H:00:00' : 'Y-m-d 00:00:00';
+        }
+
+        return 'Y-m-d 00:00:00';
     }
 
     /**

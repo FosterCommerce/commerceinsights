@@ -5,6 +5,7 @@ namespace fostercommerce\commerceinsights\controllers;
 use Craft;
 use fostercommerce\commerceinsights\bundles\ChartBundle;
 use fostercommerce\commerceinsights\formatters\BaseFormatter;
+use fostercommerce\commerceinsights\formatters\Customers;
 use fostercommerce\commerceinsights\Plugin;
 use fostercommerce\commerceinsights\services\ParamParser;
 use Tightenco\Collect\Support\Collection;
@@ -24,7 +25,7 @@ class CustomerController extends \craft\web\Controller
     {
         parent::init();
 
-        // $this->requirePermission('commerce-manageOrders');
+        // $this->requirePermission('commerce-manageSales');
         $this->view->registerAssetBundle(ChartBundle::class);
 
         $this->params = Plugin::getInstance()->paramParser;
@@ -40,7 +41,7 @@ class CustomerController extends \craft\web\Controller
 
         $query = Order::find()
             ->isCompleted(true)
-            ->dateOrdered(['and', ">{$min}", "<{$max}"])
+            ->dateOrdered(['and', ">={$min}", "<={$max}"])
             ->orderBy(implode(' ', [Craft::$app->request->getParam('sort') ?: 'dateOrdered', Craft::$app->request->getParam('dir') ?: 'asc']));
 
         $q = Craft::$app->request->getParam('q');
@@ -52,6 +53,10 @@ class CustomerController extends \craft\web\Controller
 
         $formatterClass = BaseFormatter::getFormatter(Craft::$app->request->getParam('formatter'));
         $formatter = new $formatterClass($rows);
+
+        if ($format == 'csv') {
+            return Plugin::getInstance()->csv->generate('revenue', $formatter->csv());
+        }
 
         $data = [
             'formatter' => $formatter::$key,

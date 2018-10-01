@@ -1,21 +1,28 @@
 {% extends "_layouts/cp" %}
 {%- from "_includes/forms" import text -%}
 
-{% set title = "Orders"|t('commerceinsights') %}
+{% set title = "Orders" | t('commerceinsights') %}
 {% set selectedSubnavItem = "orders" %}
 {% set url = craft.url.create %}
 
-{% block sidebar %}
-    <nav>
-        <ul>
-            <li><a href="{{ url.query('formatter', 'totalOrders') }}" data-dynamic-link='{"query":{"formatter":"totalOrders"}}' {{ formatter == 'totalOrders' ? 'class="sel"' }}>Selected Date Range</a></li>
-            <li><a href="{{ url.query('formatter', 'totalRevenue') }}" data-dynamic-link='{"query":{"formatter":"totalRevenue"}}' {{ formatter == 'totalRevenue' ? 'class="sel"' }}>Today</a></li>
-            <li><a href="{{ url.query('formatter', 'averageRevenuePerOrder') }}" data-dynamic-link='{"query":{"formatter":"averageRevenuePerOrder"}}' {{ formatter == 'averageRevenuePerOrder' ? 'class="sel"' }}>This Week</a></li>
-            <li><a href="{{ url.query('formatter', 'totalOrders') }}" data-dynamic-link='{"query":{"formatter":"totalOrders"}}' {{ formatter == 'totalOrders' ? 'class="sel"' }}>This Month</a></li>
-            <li><a href="{{ url.query('formatter', 'totalRevenue') }}" data-dynamic-link='{"query":{"formatter":"totalRevenue"}}' {{ formatter == 'totalRevenue' ? 'class="sel"' }}>This Year</a></li>
-        </ul>
-    </nav>
-{% endblock %}
+{% css %}
+.summary-header {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 1fr 2fr;
+}
+.ci-totals {
+  margin-right: 2%;
+  display: block;
+}
+.ci-totals li {
+  padding: 16px 0;
+}
+.chart {
+  margin-right: 0;
+  padding-left: 2%;
+}
+{% endcss %}
 
 {% block actionButton %}
     {% set ranges = {
@@ -31,29 +38,82 @@
                     'prev-year': 'Previous year',
                     '': 'Custom'
                 } %}
-    {% include "_includes/forms/select" with {name: "range", options: ranges, value: craft.request.getParam('range')} %}
-    {% include "_includes/forms/date" with {name: "start", value: craft.request.getParam('start')} %}
-    {% include "_includes/forms/date" with {name: "end", value: craft.request.getParam('end')} %}
+    {% include "_includes/forms/select" with {
+        id : "range",
+        name: "range",
+        options: ranges
+    } %}
+    {% include "_includes/forms/date" with {
+        id : "rangeStart",
+        name: "start",
+        value: min
+    } %}
+    {% include "_includes/forms/date" with {
+        id : "rangeEnd",
+        name: "end",
+        value: max
+    } %}
 {% endblock %}
 
 {% block content %}
     <div class="ci-spacing">
 
-        {% if totals %}
-            <ul class="ci-totals">
-                {% for key, value in totals %}
-                    <li>
-                        <div class="ci-total-label">{{ key }}</div> <strong class="ci-total-value">{{ value }}</strong>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        <form method="get" class="ci-actions">
+            <input type="hidden" name="formatter" value="{{ formatter }}">
 
-        <div class="chart">
-            <canvas id="chart" width="900" height="300" data-chart-data="{{ chartData|json_encode }}" data-chart-start="{{ min }}" data-chart-end="{{ max }}" data-chart-shows-currency="{{ chartShowsCurrency }}"></canvas>
+            <div class="select">
+                <select>
+                    <option value=""><span>{status color}</span> Status Name</option>
+                    <option value=""><span>{status color}</span> Status Name</option>
+                    <option value=""><span>{status color}</span> Status Name</option>
+                    <option value=""><span>{status color}</span> Status Name</option>
+                </select>
+            </div>
+            <div class="ci-action-search">
+                {#
+                    We want to add ability to search beyond the Commerce Order model.
+                    For example, we want to search by product name, SKU, category, shipping method, coupon code, etc.
+                #}
+                {{ text({
+                    name: "q",
+                    value: craft.request.getParam('q'),
+                    placeholder: "Search"|t('app')
+                }) }}
+            </div>
+            <div class="ci-action-actions">
+                <input type="hidden" name="startDate" value=""/>
+                <input type="hidden" name="endDate" value=""/>
+                <a href="{{ craft.url.create.path('/admin/commerceinsights/orders/csv') }}" data-dynamic-link='{"path":"/admin/commerceinsights/orders/csv"}' class="btn">Export</a>
+            </div>
+        </form>
+
+        <div class="summary-header">
+          {% if totals %}
+              {#
+                  We should see '# of Orders', 'AOV (average order value)', 'Total Revenue (totalPaid)'
+              #}
+              <ul class="ci-totals">
+                  {% for key, value in totals %}
+                      <li>
+                          <div class="ci-total-label">{{ key }}</div>
+                          <strong class="ci-total-value">{{ value }}</strong>
+                      </li>
+                  {% endfor %}
+              </ul>
+          {% endif %}
+
+          <div class="chart">
+              <canvas id="chart" data-chart-data="{{ chartData|json_encode }}" data-chart-start="{{ min }}" data-chart-end="{{ max }}" data-chart-shows-currency="{{ chartShowsCurrency }}"></canvas>
+          </div>
         </div>
 
         <div class="elements">
+            {#
+                The following column data should be clickable.
+                - Status: when clicked, update data to filter by status with other current search values, if possible.
+                - Email: when clicked, update data to filter by that email address. Maybe we can eventually add separate link to open customer's detail page.
+            #}
+
             {{ chartTable|raw }}
         </div>
     </div>

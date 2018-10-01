@@ -6,6 +6,7 @@ use Craft;
 use fostercommerce\commerceinsights\Plugin;
 use fostercommerce\commerceinsights\services\ParamParser;
 use Tightenco\Collect\Support\Collection;
+use yii\web\HttpException;
 
 abstract class BaseFormatter
 {
@@ -44,8 +45,7 @@ abstract class BaseFormatter
         $this->groupedData = $this->data
             ->mapToGroups(function ($item) {
                 return [$item->dateOrdered->format($this->stepFormat) => $item];
-            })
-        ;
+            });
     }
 
     public static function addFormatter($formatter)
@@ -57,14 +57,18 @@ abstract class BaseFormatter
      * @param $key
      * @return BaseFormatter
      */
-    public static function getFormatter($key)
+    public static function getFormatter($formatter)
     {
+        if (is_null($formatter)) {
+            throw new HttpException(400, 'Invalid formatter');
+        }
+
+        $key = class_exists($formatter) ? $formatter::$key : $formatter;
         if (!empty(static::$formatters[$key])) {
             return static::$formatters[$key];
         }
 
-        $keys = array_keys(static::$formatters);
-        return static::$formatters[$keys[0]];
+        throw new HttpException(501, 'Invalid formatter');
     }
 
     /**
@@ -101,4 +105,6 @@ abstract class BaseFormatter
     }
 
     abstract public function format();
+
+    abstract public function csv();
 }
