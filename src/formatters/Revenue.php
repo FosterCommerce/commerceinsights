@@ -51,7 +51,7 @@ class Revenue extends BaseFormatter
                 $order->number,
                 $order->orderStatus->name,
                 $craftFormatter->asCurrency($order->totalPrice),
-                $craftFormatter->asCurrency($order->getLineItems()[0]->getAdjustmentsTotalByType('tax')),
+                $craftFormatter->asCurrency($order->getLineItems()[0]->getAdjustmentsTotalByType('tax') ?: 0),
                 $craftFormatter->asCurrency($order->totalDiscount),
                 $craftFormatter->asCurrency($order->totalPaid),
                 $order->email,
