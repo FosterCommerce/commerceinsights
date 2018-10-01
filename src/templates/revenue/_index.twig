@@ -41,18 +41,17 @@
     {% include "_includes/forms/select" with {
         id : "range",
         name: "range",
-        options: ranges,
-        value: craft.request.getParam('range')
+        options: ranges
     } %}
     {% include "_includes/forms/date" with {
         id : "rangeStart",
         name: "start",
-        value: craft.request.getParam('start')
+        value: min
     } %}
     {% include "_includes/forms/date" with {
         id : "rangeEnd",
         name: "end",
-        value: craft.request.getParam('end')
+        value: max
     } %}
 {% endblock %}
 
