@@ -30,4 +30,9 @@ class AverageRevenuePerOrder extends BaseFormatter
             ->values()
             ->toArray();
     }
+
+    public function csv()
+    {
+        return [];
+    }
 }

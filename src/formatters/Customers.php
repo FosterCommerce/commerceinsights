@@ -34,4 +34,9 @@ class Customers extends BaseFormatter
             ->values()
             ->toArray();
     }
+
+    public function csv()
+    {
+        return [];
+    }
 }

@@ -59,6 +59,10 @@ class OrderController extends \craft\web\Controller
         $formatterClass = BaseFormatter::getFormatter(Orders::class);
         $formatter = new $formatterClass($rows);
 
+        if ($format == 'csv') {
+            return Plugin::getInstance()->csv->generate('orders', $formatter->csv());
+        }
+
         $data = [
             'formatter' => $formatter::$key,
             'chartShowsCurrency' => $formatter->showsCurrency(),
@@ -71,11 +75,6 @@ class OrderController extends \craft\web\Controller
 
         if (Craft::$app->request->isAjax || $format == 'json') {
             return $this->asJson($data);
-        }
-
-        if ($format == 'csv') {
-            header('Content-type: text/csv');
-            return $this->renderTemplate('commerceinsights/_csv', ['data' => $rows]);
         }
 
         return $this->renderTemplate('commerceinsights/orders/_index', $data);

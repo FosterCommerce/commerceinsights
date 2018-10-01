@@ -13,7 +13,8 @@
   }],
   "require": {
     "nesbot/carbon": "^1.33",
-    "tightenco/collect": "^5.7"
+    "tightenco/collect": "^5.7",
+    "league/csv": "^9.1"
   },
   "require-dev": {
     "craftcms/cms": "^3.0.0",
@@ -31,6 +32,10 @@
     "hasCpSettings": false,
     "hasCpSection": true,
     "changelogUrl": "",
-    "schemaVersion": "1.0.0"
+    "schemaVersion": "1.0.0",
+    "components": {
+      "paramParser": "fostercommerce\\commerceinsights\\services\\ParamParser",
+      "csv": "fostercommerce\\commerceinsights\\services\\Csv"
+    }
   }
 }

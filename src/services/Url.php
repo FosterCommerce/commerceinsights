@@ -4,6 +4,7 @@ namespace fostercommerce\commerceinsights\services;
 
 use yii\base\Component;
 
+// TODO: This should be a Variable
 class Url extends Component
 {
     private $urlParts = [];

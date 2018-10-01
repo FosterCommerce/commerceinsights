@@ -54,6 +54,10 @@ class CustomerController extends \craft\web\Controller
         $formatterClass = BaseFormatter::getFormatter(Craft::$app->request->getParam('formatter'));
         $formatter = new $formatterClass($rows);
 
+        if ($format == 'csv') {
+            return Plugin::getInstance()->csv->generate('revenue', $formatter->csv());
+        }
+
         $data = [
             'formatter' => $formatter::$key,
             'chartShowsCurrency' => $formatter->showsCurrency(),
@@ -66,11 +70,6 @@ class CustomerController extends \craft\web\Controller
 
         if (Craft::$app->request->isAjax || $format == 'json') {
             return $this->asJson($data);
-        }
-
-        if ($format == 'csv') {
-            header('Content-type: text/csv');
-            return $this->renderTemplate('commerceinsights/_csv', ['data' => $rows]);
         }
 
         return $this->renderTemplate('commerceinsights/customers/_index', $data);

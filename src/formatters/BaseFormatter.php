@@ -105,4 +105,6 @@ abstract class BaseFormatter
     }
 
     abstract public function format();
+
+    abstract public function csv();
 }
