@@ -62,11 +62,15 @@
             <input type="hidden" name="formatter" value="{{ formatter }}">
 
             <div class="select">
-                <select>
-                    <option value=""><span>{status color}</span> Status Name</option>
-                    <option value=""><span>{status color}</span> Status Name</option>
-                    <option value=""><span>{status color}</span> Status Name</option>
-                    <option value=""><span>{status color}</span> Status Name</option>
+                <select name="status" class="query-extra">
+                    {% for status in statuses %}
+                    <option
+                      {% if selectedStatus == status.handle %}selected{% endif %}
+                      value="{{status.handle}}">
+                      {# {{status.color}} #}
+                      {{status.name}}
+                    </option>
+                    {% endfor %}
                 </select>
             </div>
             <div class="ci-action-search">
@@ -89,9 +93,6 @@
 
         <div class="summary-header">
           {% if totals %}
-              {#
-                  We should see '# of Orders', 'AOV (average order value)', 'Total Revenue (totalPaid)'
-              #}
               <ul class="ci-totals">
                   {% for key, value in totals %}
                       <li>

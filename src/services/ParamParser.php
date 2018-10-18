@@ -14,7 +14,7 @@ class ParamParser extends Component
     public function __construct()
     {
         $session = Craft::$app->getSession();
-        $request = \Craft::$app->request;
+        $request = Craft::$app->request;
         $start = $request->getParam('start');
         $end = $request->getParam('end');
         $range = $request->getParam('range') ?: 7 * 24 * 60 * 60 /* 7 days */;

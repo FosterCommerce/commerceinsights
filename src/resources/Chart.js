@@ -1,11 +1,18 @@
 import Chart from 'chart.js'
-import moment from 'moment'
+import parseDate from 'date-fns/parse'
+import startOfHour from 'date-fns/start_of_hour'
+import startOfDay from 'date-fns/start_of_day'
+import startOfWeek from 'date-fns/start_of_week'
+import startOfMonth from 'date-fns/start_of_month'
+import differenceInDays from 'date-fns/difference_in_days'
+import differenceInMonths from 'date-fns/difference_in_months'
+import format from 'date-fns/format'
+import subDays from 'date-fns/sub_days'
 import groupBy from 'lodash/groupBy'
 
 const calculateInterval = (min, max, iso = false) => {
-  const duration = moment.duration(max.diff(min))
-  const days = duration.asDays()
-  const months = duration.asMonths()
+  const days = differenceInDays(max, min)
+  const months = differenceInMonths(max, min)
 
   if (days <= 2) {
     return iso ? 'isoHour' : 'hour'
@@ -18,12 +25,23 @@ const calculateInterval = (min, max, iso = false) => {
   return iso ? 'isoMonth' : 'month'
 }
 
+const startOf = (interval, value) => {
+  switch (interval) {
+    case 'hour':
+      return startOfHour(value)
+    case 'day':
+      return startOfDay(value)
+    case 'week':
+      return startOfWeek(value)
+    default:
+      return startOfMonth(value)
+  }
+}
+
 const groupData = (min, max, data) => {
   const interval = calculateInterval(min, max)
   const groupedResults = groupBy(data, day =>
-    moment(day.x, 'YYYY-MM-DD hh:mm:ss')
-      .startOf(interval)
-      .toISOString(),
+    format(startOf(interval, parseDate(day.x)), 'YYYY-MM-DDTHH:mm:ss.SSSZ'),
   )
 
   const result = Object.keys(groupedResults).map(key => ({
@@ -38,14 +56,14 @@ export default class SomeChartLib {
   constructor(el) {
     this.el = el
     this.chartObj = false
-    this._min = moment().subtract(1, 'day')
-    this._max = moment()
+    this._min = subDays(new Date(), 1)
+    this._max = new Date()
     this._currency = false
   }
 
   update(min, max, data) {
-    this._min = moment(min)
-    this._max = moment(max)
+    this._min = parseDate(min)
+    this._max = parseDate(max)
     this._data = groupData(this._min, this._max, data)
   }
 
@@ -60,8 +78,14 @@ export default class SomeChartLib {
   draw() {
     if (this.chartObj) {
       this.chartObj.data.datasets[0].data = this._data
-      this.chartObj.options.scales.xAxes[0].time.min = this._min.toISOString()
-      this.chartObj.options.scales.xAxes[0].time.max = this._max.toISOString()
+      this.chartObj.options.scales.xAxes[0].time.min = format(
+        this._min,
+        'YYYY-MM-DDTHH:mm:ss.SSSZ',
+      )
+      this.chartObj.options.scales.xAxes[0].time.max = format(
+        this._max,
+        'YYYY-MM-DDTHH:mm:ss.SSSZ',
+      )
       this.chartObj.options.scales.xAxes[0].time.unit = calculateInterval(
         this._min,
         this._max,
@@ -100,8 +124,8 @@ export default class SomeChartLib {
             {
               type: 'time',
               time: {
-                min: this._min.toISOString(),
-                max: this._max.toISOString(),
+                min: format(this._min, 'YYYY-MM-DDTHH:mm:ss.SSSZ'),
+                max: format(this._max, 'YYYY-MM-DDTHH:mm:ss.SSSZ'),
                 unit: calculateInterval(this._min, this._max),
               },
             },

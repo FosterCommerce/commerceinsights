@@ -1,6 +1,8 @@
 import axios from 'axios'
 import qs from 'qs'
-import moment from 'moment'
+import startOfDay from 'date-fns/start_of_day'
+import endOfDay from 'date-fns/end_of_day'
+import format from 'date-fns/format'
 import debounce from 'lodash/debounce'
 import Chart from './Chart'
 import getDateRange from './getDateRange'
@@ -33,14 +35,23 @@ $(function() {
 
   const loadData = () => {
     const formatter = document.querySelector('*[name="formatter"]').value
-    const startDate = moment($('[name="start[date]"]').datepicker('getDate'))
-      .startOf('day')
-      .toISOString(true)
-    const endDate = moment($('[name="end[date]"]').datepicker('getDate'))
-      .endOf('day')
-      .toISOString(true)
+    const startDate = format(
+      startOfDay($('[name="start[date]"]').datepicker('getDate')),
+      'YYYY-MM-DDTHH:mm:ss.SSSZ',
+    )
+    const endDate = format(
+      endOfDay($('[name="end[date]"]').datepicker('getDate')),
+      'YYYY-MM-DDTHH:mm:ss.SSSZ',
+    )
+
+    // Get additional query params
+    const extra = {}
+    selectAll('.query-extra').forEach(el => {
+      extra[el.name] = el.value
+    })
 
     const params = {
+      ...extra,
       start: startDate,
       end: endDate,
       q: select('*[name="q"]').value,
@@ -57,7 +68,7 @@ $(function() {
         chart.currency(res.data.chartShowsCurrency)
         chart.draw()
 
-        document.querySelector('.elements').innerHTML = res.data.chartTable
+        select('.elements').innerHTML = res.data.chartTable
 
         let totalsHTML = ''
         for (const key in res.data.totals) {
@@ -66,7 +77,7 @@ $(function() {
     <div class="ci-total-label">${key}</div> <strong class="ci-total-value">${value}</strong>
 </li>`
         }
-        document.querySelector('.ci-totals').innerHTML = totalsHTML
+        select('.ci-totals').innerHTML = totalsHTML
       })
       .catch(function(err) {
         // TODO: Handle this
@@ -75,7 +86,7 @@ $(function() {
       .finally(function() {
         history.replaceState({}, '', requestUrl)
 
-        const links = document.querySelectorAll('[data-dynamic-link]')
+        const links = selectAll('[data-dynamic-link]')
         links.forEach(function(link) {
           let query, path
           const config = JSON.parse(link.dataset.dynamicLink)
@@ -94,7 +105,10 @@ $(function() {
       })
   }
 
-  select('[name="q"]').addEventListener('input', debounce(loadData, 2000))
+  select('[name="q"], .query-extra').addEventListener(
+    'input',
+    debounce(loadData, 2000),
+  )
 
   selectAll('[name="start[date]"],[name="end[date]"]').forEach(el => {
     const debouncedLoad = debounce(loadData, 2000)

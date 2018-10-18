@@ -11,17 +11,28 @@ class Orders extends BaseFormatter
 
     public function totals()
     {
-        $groups = $this->empty->merge($this->groupedData)->map(function ($group) {
-            return $group->count();
+        $merged = $this->empty->merge($this->groupedData);
+        $groups = $merged->map(function ($group) {
+            return $group->sum('totalPrice');
         });
-        $ordersPerDay = $groups->sum() / $groups->count();
+        $filtered = $merged
+            ->filter(function ($group) {
+                return $group->count() > 0;
+            })
+            ->map(function ($group) {
+                return [
+                    'totalPrice' => $group->sum('totalPrice'),
+                    'count' => $group->count(),
+                ];
+            });
 
+        $formatter = Craft::$app->formatter;
         return collect([
             'Total' => $this->data->count(),
-            'Average' => number_format($ordersPerDay, 2),
-            'Best' => $groups->max(),
-            'Total Price' => Craft::$app->getFormatter()->asCurrency($this->data->sum('totalPrice')),
-            'Total Paid' => Craft::$app->getFormatter()->asCurrency($this->data->sum('totalPaid')),
+            'Average' => $formatter->asCurrency($filtered->sum('count') ? $filtered->sum('totalPrice') / $filtered->sum('count') : 0),
+            'Best' => $formatter->asCurrency($groups->max()),
+            'Total Price' => $formatter->asCurrency($this->data->sum('totalPrice')),
+            'Total Revenue' => $formatter->asCurrency($this->data->sum('totalPaid')),
         ]);
     }
 

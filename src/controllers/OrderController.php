@@ -10,6 +10,7 @@ use fostercommerce\commerceinsights\Plugin;
 use fostercommerce\commerceinsights\services\ParamParser;
 use Tightenco\Collect\Support\Collection;
 use yii\web\Response;
+use craft\commerce\Plugin as CommercePlugin;
 use craft\commerce\elements\Order;
 
 class OrderController extends \craft\web\Controller
@@ -39,7 +40,14 @@ class OrderController extends \craft\web\Controller
         $min = $this->params->start();
         $max = $this->params->end();
 
-        $query = Order::find()
+        $query = Order::find();
+
+        $status = Craft::$app->request->getParam('status');
+        if ($status) {
+            $query->orderStatus($status);
+        }
+
+        $query
             ->isCompleted(true)
             ->dateOrdered(['and', ">={$min}", "<={$max}"])
             ->orderBy(
@@ -64,12 +72,14 @@ class OrderController extends \craft\web\Controller
         }
 
         $data = [
+            'statuses' => CommercePlugin::getInstance()->orderStatuses->getAllOrderStatuses(),
             'formatter' => $formatter::$key,
             'chartShowsCurrency' => $formatter->showsCurrency(),
             'totals' => $formatter->totals(),
             'chartData' => $formatter->format(),
             'min' => $min,
             'max' => $max,
+            'selectedStatus' => $status,
             'chartTable' => $this->getView()->renderTemplate('commerceinsights/_table', ['data' => $rows]),
         ];
 
