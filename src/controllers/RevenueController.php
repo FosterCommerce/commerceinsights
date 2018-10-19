@@ -36,15 +36,16 @@ class RevenueController extends \craft\web\Controller
      */
     public function actionRevenueIndex($format='html')
     {
+        $request = Craft::$app->request;
         $min = $this->params->start();
         $max = $this->params->end();
 
         $query = Order::find()
             ->isCompleted(true)
-            ->dateOrdered(['and', ">={$min}", "<={$max}"])
-            ->orderBy(implode(' ', [Craft::$app->request->getParam('sort') ?: 'dateOrdered', Craft::$app->request->getParam('dir') ?: 'asc']));
+            ->dateOrdered(['and', ">={$min}", "<{$max}"])
+            ->orderBy(implode(' ', [$request->getParam('sort') ?: 'dateOrdered', $request->getParam('dir') ?: 'asc']));
 
-        $q = Craft::$app->request->getParam('q');
+        $q = $request->getParam('q');
         if (!empty($q)) {
             $query = $query->search($q);
         }
@@ -65,10 +66,11 @@ class RevenueController extends \craft\web\Controller
             'chartData' => $formatter->format(),
             'min' => $min,
             'max' => $max,
+            'range' => $this->params->range(),
             'chartTable' => $this->getView()->renderTemplate('commerceinsights/_table', ['data' => $rows]),
         ];
 
-        if (Craft::$app->request->isAjax || $format == 'json') {
+        if ($request->isAjax || $format == 'json') {
             return $this->asJson($data);
         }
 

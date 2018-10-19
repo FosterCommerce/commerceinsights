@@ -41,7 +41,8 @@
     {% include "_includes/forms/select" with {
         id : "range",
         name: "range",
-        options: ranges
+        options: ranges,
+        value: range
     } %}
     {% include "_includes/forms/date" with {
         id : "rangeStart",
@@ -51,7 +52,7 @@
     {% include "_includes/forms/date" with {
         id : "rangeEnd",
         name: "end",
-        value: max
+        value: max|date_modify('-1 day')
     } %}
 {% endblock %}
 

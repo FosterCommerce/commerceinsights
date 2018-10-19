@@ -49,7 +49,7 @@ class OrderController extends \craft\web\Controller
 
         $query
             ->isCompleted(true)
-            ->dateOrdered(['and', ">={$min}", "<={$max}"])
+            ->dateOrdered(['and', ">={$min}", "<{$max}"])
             ->orderBy(
                 implode(' ', [
                     Craft::$app->request->getParam('sort') ?: 'dateOrdered',
@@ -79,6 +79,7 @@ class OrderController extends \craft\web\Controller
             'chartData' => $formatter->format(),
             'min' => $min,
             'max' => $max,
+            'range' => $this->params->range(),
             'selectedStatus' => $status,
             'chartTable' => $this->getView()->renderTemplate('commerceinsights/_table', ['data' => $rows]),
         ];

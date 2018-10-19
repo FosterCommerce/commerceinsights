@@ -37,11 +37,11 @@ $(function() {
     const formatter = document.querySelector('*[name="formatter"]').value
     const startDate = format(
       startOfDay($('[name="start[date]"]').datepicker('getDate')),
-      'YYYY-MM-DDTHH:mm:ss.SSSZ',
+      'YYYY-MM-DD',
     )
     const endDate = format(
       endOfDay($('[name="end[date]"]').datepicker('getDate')),
-      'YYYY-MM-DDTHH:mm:ss.SSSZ',
+      'YYYY-MM-DD',
     )
 
     // Get additional query params
@@ -50,10 +50,15 @@ $(function() {
       extra[el.name] = el.value
     })
 
+    const selectedRange = select('#range').value
+
+    const range = selectedRange === ''
+      ? { start: startDate, end: endDate }
+      : { range: selectedRange }
+
     const params = {
       ...extra,
-      start: startDate,
-      end: endDate,
+      ...range,
       q: select('*[name="q"]').value,
     }
 
