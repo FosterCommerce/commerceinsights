@@ -52,9 +52,10 @@ $(function() {
 
     const selectedRange = select('#range').value
 
-    const range = selectedRange === ''
-      ? { start: startDate, end: endDate }
-      : { range: selectedRange }
+    const range =
+      selectedRange === ''
+        ? { start: startDate, end: endDate }
+        : { range: selectedRange }
 
     const params = {
       ...extra,
