@@ -73,7 +73,7 @@ class RevenueController extends \craft\web\Controller
         $change = $diff >= 0 ? Craft::t('commerceinsights', 'up') : Craft::t('commerceinsights', 'down');
         $percentage =
             $prevTotal === 0
-            ? ($totalDiff === 0) ? 0 : 100
+            ? ($totalDiff === 0 ? 0 : 100)
             : ($totalDiff / $prevTotal) * 100;
 
         if ($format == 'csv') {
