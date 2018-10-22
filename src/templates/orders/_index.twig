@@ -11,11 +11,11 @@
   grid-auto-flow: column;
   grid-template-columns: 1fr 2fr;
 }
-.ci-totals {
+.ci-totals > ul {
   margin-right: 2%;
   display: block;
 }
-.ci-totals li {
+.ci-totals > ul li {
   padding: 16px 0;
 }
 .chart {
@@ -81,7 +81,7 @@
                 #}
                 {{ text({
                     name: "q",
-                    value: craft.request.getParam('q'),
+                    value: craft.app.request.getParam('q'),
                     placeholder: "Search"|t('app')
                 }) }}
             </div>
@@ -93,16 +93,8 @@
         </form>
 
         <div class="summary-header">
-          {% if totals %}
-              <ul class="ci-totals">
-                  {% for key, value in totals %}
-                      <li>
-                          <div class="ci-total-label">{{ key }}</div>
-                          <strong class="ci-total-value">{{ value }}</strong>
-                      </li>
-                  {% endfor %}
-              </ul>
-          {% endif %}
+          <div class="ci-totals">{{totals|raw}}</div>
+
 
           <div class="chart">
               <canvas id="chart" data-chart-data="{{ chartData|json_encode }}" data-chart-start="{{ min }}" data-chart-end="{{ max }}" data-chart-shows-currency="{{ chartShowsCurrency }}"></canvas>

@@ -11,6 +11,7 @@ use fostercommerce\commerceinsights\services\ParamParser;
 use Tightenco\Collect\Support\Collection;
 use yii\web\Response;
 use craft\commerce\elements\Order;
+use DateTime;
 
 class RevenueController extends \craft\web\Controller
 {
@@ -31,15 +32,9 @@ class RevenueController extends \craft\web\Controller
         $this->params = Plugin::getInstance()->paramParser;
     }
 
-    /**
-     * Index of sales
-     */
-    public function actionRevenueIndex($format='html')
-    {
-        $request = Craft::$app->request;
-        $min = $this->params->start();
-        $max = $this->params->end();
 
+    private function getRevenueQuery($min, $max, $request)
+    {
         $query = Order::find()
             ->isCompleted(true)
             ->dateOrdered(['and', ">={$min}", "<{$max}"])
@@ -51,18 +46,58 @@ class RevenueController extends \craft\web\Controller
         }
 
         $rows = collect($query->all());
+        return $rows;
+    }
+
+    public function actionRevenueIndex($format='html')
+    {
+        $request = Craft::$app->request;
+        $min = $this->params->start();
+        $max = $this->params->end();
+
+        $currMin = new DateTime($min);
+        $prevMin = (clone $currMin)->sub($currMin->diff(new DateTime($max)));
 
         $formatterClass = BaseFormatter::getFormatter(Revenue::class);
+
+        $rows = $this->getRevenueQuery($min, $max, $request);
+        $prevPeriodRows = $this->getRevenueQuery($prevMin->format('Y-m-d'), $min, $request);
+
         $formatter = new $formatterClass($rows);
+        $prevPeriodFormatter = new $formatterClass($prevPeriodRows);
+
+        $prevTotal = $prevPeriodFormatter->totals()['TotalPaid'];
+        $currTotal = $formatter->totals();
+        $diff = $currTotal['TotalPaid'] - $prevTotal;
+        $totalDiff = abs($diff);
+        $change = $diff >= 0 ? Craft::t('commerceinsights', 'up') : Craft::t('commerceinsights', 'down');
+        $percentage =
+            $prevTotal === 0
+            ? ($totalDiff === 0) ? 0 : 100
+            : ($totalDiff / $prevTotal) * 100;
 
         if ($format == 'csv') {
             return Plugin::getInstance()->csv->generate('revenue', $formatter->csv());
         }
 
+        $summaryHtml = Craft::$app->view->renderTemplate('commerceinsights/revenue/summary', [
+            'total' => $currTotal['Total'],
+            'min' => $min,
+            'max' => $max,
+            'change' => $change,
+            'diff' => $totalDiff,
+            'diffPercentage' => $percentage,
+        ]);
+
+        $totalsHtml = Craft::$app->view->renderTemplate('commerceinsights/revenue/totals', [
+            'totals' => $currTotal,
+        ]);
+
         $data = [
             'formatter' => $formatter::$key,
+            'summary' => $summaryHtml,
+            'totals' => $totalsHtml,
             'chartShowsCurrency' => $formatter->showsCurrency(),
-            'totals' => $formatter->totals(),
             'chartData' => $formatter->format(),
             'min' => $min,
             'max' => $max,

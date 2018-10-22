@@ -18,8 +18,10 @@ class Revenue extends BaseFormatter
         $count = $groups->count();
         $ordersPerDay = $groups->sum() / ($count > 0 ? $count : 1);
 
+        $totalPaid = $this->data->sum('totalPaid');
         return collect([
-            'Total' => Craft::$app->getFormatter()->asCurrency($this->data->sum('totalPaid')),
+            'Total' => Craft::$app->getFormatter()->asCurrency($totalPaid),
+            'TotalPaid' => $totalPaid,
             'Average' => Craft::$app->getFormatter()->asCurrency($ordersPerDay),
         ]);
     }

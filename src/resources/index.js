@@ -76,14 +76,19 @@ $(function() {
 
         select('.elements').innerHTML = res.data.chartTable
 
-        let totalsHTML = ''
-        for (const key in res.data.totals) {
-          const value = res.data.totals[key]
-          totalsHTML += `<li>
-    <div class="ci-total-label">${key}</div> <strong class="ci-total-value">${value}</strong>
-</li>`
+        if (res.data.summary) {
+          const summaryEl = select('.ci-summary')
+          if (summaryEl) {
+            summaryEl.innerHTML = res.data.summary
+          }
         }
-        select('.ci-totals').innerHTML = totalsHTML
+
+        if (res.data.totals) {
+          const totalsEl = select('.ci-totals')
+          if (totalsEl) {
+            totalsEl.innerHTML = res.data.totals
+          }
+        }
       })
       .catch(function(err) {
         // TODO: Handle this

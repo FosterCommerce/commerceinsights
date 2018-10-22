@@ -71,11 +71,15 @@ class OrderController extends \craft\web\Controller
             return Plugin::getInstance()->csv->generate('orders', $formatter->csv());
         }
 
+        $totalsHtml = Craft::$app->view->renderTemplate('commerceinsights/revenue/totals', [
+            'totals' => $formatter->totals(),
+        ]);
+
         $data = [
+            'totals' => $totalsHtml,
             'statuses' => CommercePlugin::getInstance()->orderStatuses->getAllOrderStatuses(),
             'formatter' => $formatter::$key,
             'chartShowsCurrency' => $formatter->showsCurrency(),
-            'totals' => $formatter->totals(),
             'chartData' => $formatter->format(),
             'min' => $min,
             'max' => $max,

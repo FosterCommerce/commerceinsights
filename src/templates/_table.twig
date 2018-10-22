@@ -1,5 +1,5 @@
-{% set pageSortKey = craft.request.getParam('sort') ?: 'dateOrdered' %}
-{% set pageSortDirection = craft.request.getParam('dir') ?: 'asc' %}
+{% set pageSortKey = craft.app.request.getParam('sort') ?: 'dateOrdered' %}
+{% set pageSortDirection = craft.app.request.getParam('dir') ?: 'asc' %}
 
 {% set headings = [
     {label: "Date", sortable: true, sortKey: 'dateOrdered'},
@@ -42,7 +42,7 @@
             <td>{{ order.orderStatus }}</td>
             <td>{{ order.totalPrice|currency }}</td>
             <td>{{ order.getLineItems()[0].getAdjustmentsTotalByType('tax')|default(0)|currency }}</td>
-            <td>{{ order.totalDiscount|currency }}</td>
+            <td>{{ order.getAdjustmentsTotalByType('discount')|currency }}</td>
             <td>{{ order.totalPaid|currency }}</td>
             <td>{{ order.email }}</td>
         </tr>

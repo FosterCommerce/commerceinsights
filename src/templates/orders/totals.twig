@@ -1,0 +1,12 @@
+{% if not totals %}
+    {% set totals = [] %}
+{% endif %}
+
+<ul>
+    {% for key, value in totals %}
+        <li>
+            <div class="ci-total-label">{{ key }}</div>
+            <strong class="ci-total-value">{{ value }}</strong>
+        </li>
+    {% endfor %}
+</ul>

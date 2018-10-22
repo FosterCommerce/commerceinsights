@@ -90,14 +90,14 @@ label[for="filter-toggle"]::after {
     display: block;
 }
 
-.ci-totals {
+.ci-totals > ul {
     background: #fbfcfd;
     border: 1px solid #e3e5e8;
     padding: 10px;
     display: flex;
 }
 
-.ci-totals > * {
+.ci-totals > ul > * {
     flex-grow: 1;
     width: 100%;
     text-align: center;
