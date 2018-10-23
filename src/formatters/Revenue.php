@@ -21,9 +21,13 @@ class Revenue extends BaseFormatter
         $totalPaid = $this->data->sum('totalPaid');
         return collect([
             'Total' => Craft::$app->getFormatter()->asCurrency($totalPaid),
-            'TotalPaid' => $totalPaid,
             'Average' => Craft::$app->getFormatter()->asCurrency($ordersPerDay),
         ]);
+    }
+
+    public function totalPaid()
+    {
+        return $this->data->sum('totalPaid');
     }
 
     public function format()

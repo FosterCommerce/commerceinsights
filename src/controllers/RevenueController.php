@@ -66,9 +66,8 @@ class RevenueController extends \craft\web\Controller
         $formatter = new $formatterClass($rows);
         $prevPeriodFormatter = new $formatterClass($prevPeriodRows);
 
-        $prevTotal = $prevPeriodFormatter->totals()['TotalPaid'];
-        $currTotal = $formatter->totals();
-        $diff = $currTotal['TotalPaid'] - $prevTotal;
+        $prevTotal = $prevPeriodFormatter->totalPaid();
+        $diff = $formatter->totalPaid() - $prevTotal;
         $totalDiff = abs($diff);
         $change = $diff >= 0 ? Craft::t('commerceinsights', 'up') : Craft::t('commerceinsights', 'down');
         $percentage =
@@ -80,8 +79,10 @@ class RevenueController extends \craft\web\Controller
             return Plugin::getInstance()->csv->generate('revenue', $formatter->csv());
         }
 
+        $totals = $formatter->totals();
+
         $summaryHtml = Craft::$app->view->renderTemplate('commerceinsights/revenue/summary', [
-            'total' => $currTotal['Total'],
+            'total' => $totals['Total'],
             'min' => $min,
             'max' => $max,
             'change' => $change,
@@ -90,7 +91,7 @@ class RevenueController extends \craft\web\Controller
         ]);
 
         $totalsHtml = Craft::$app->view->renderTemplate('commerceinsights/revenue/totals', [
-            'totals' => $currTotal,
+            'totals' => $totals,
         ]);
 
         $data = [
