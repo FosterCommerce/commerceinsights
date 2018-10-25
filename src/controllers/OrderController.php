@@ -91,7 +91,7 @@ class OrderController extends \craft\web\Controller
             return Plugin::getInstance()->csv->generate('orders', $formatter->csv());
         }
 
-        $totalsHtml = Craft::$app->view->renderTemplate('commerceinsights/revenue/totals', [
+        $totalsHtml = Craft::$app->view->renderTemplate('commerceinsights/orders/totals', [
             'totals' => $formatter->totals(),
         ]);
 
@@ -105,7 +105,7 @@ class OrderController extends \craft\web\Controller
             'max' => $max,
             'range' => $this->params->range(),
             'selectedStatus' => $status,
-            'chartTable' => $this->getView()->renderTemplate('commerceinsights/_table', ['data' => $rows]),
+            'chartTable' => $this->view->renderTemplate('commerceinsights/orders/_table', ['data' => $rows]),
         ];
 
         if (Craft::$app->request->isAjax || $format == 'json') {

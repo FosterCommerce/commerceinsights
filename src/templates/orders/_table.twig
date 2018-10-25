@@ -9,6 +9,7 @@
     {label: "Tax", sortable: false, sortKey: 'tax'},
     {label: "Discount", sortable: false, sortKey: 'discount'},
     {label: "Total Paid", sortable: true, sortKey: 'totalPaid'},
+    {label: "Paid Status", sortable: true, sortKey: 'paidStatus'},
     {label: "Email", sortable: false},
 ] %}
 
@@ -44,6 +45,7 @@
             <td>{{ order.totalTax|default(0)|currency }}</td>
             <td>{{ order.totalDiscount|default(0)|currency }}</td>
             <td>{{ order.totalPaid|currency }}</td>
+            <td>{{ order.paidStatus|capitalize }}</td>
             <td>{{ order.email }}</td>
         </tr>
     {% endfor %}

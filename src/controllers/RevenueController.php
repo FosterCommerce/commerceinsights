@@ -59,6 +59,7 @@ class RevenueController extends \craft\web\Controller
             ->andWhere(['isCompleted' => true])
             ->andWhere(['>=', 'dateOrdered', Db::prepareDateForDb($min)])
             ->andWhere(['<', 'dateOrdered', Db::prepareDateForDb($max)])
+            ->andWhere(['!=', 'paidStatus', 'unpaid'])
             ->orderBy(
                 implode(' ', [
                     Craft::$app->request->getParam('sort') ?: 'dateOrdered',
@@ -130,7 +131,7 @@ class RevenueController extends \craft\web\Controller
             'min' => $min,
             'max' => $max,
             'range' => $this->params->range(),
-            'chartTable' => $this->getView()->renderTemplate('commerceinsights/_table', ['data' => $rows]),
+            'chartTable' => $this->view->renderTemplate('commerceinsights/revenue/_table', ['data' => $rows]),
         ];
 
         if ($request->isAjax || $format == 'json') {
