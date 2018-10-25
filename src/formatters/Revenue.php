@@ -35,7 +35,7 @@ class Revenue extends BaseFormatter
         return $this->empty->merge($this->groupedData)
             ->map(function (Collection $group, $key) {
                 return ['x' => $key, 'y' => $group->sum(function ($row) {
-                    return $row->totalPrice;
+                    return $row['totalPrice'];
                 })];
             })
             ->values()

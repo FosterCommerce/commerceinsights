@@ -10,7 +10,8 @@ use fostercommerce\commerceinsights\Plugin;
 use fostercommerce\commerceinsights\services\ParamParser;
 use Tightenco\Collect\Support\Collection;
 use yii\web\Response;
-use craft\commerce\elements\Order;
+use craft\db\Query;
+use craft\helpers\Db;
 use DateTime;
 
 class RevenueController extends \craft\web\Controller
@@ -35,15 +36,41 @@ class RevenueController extends \craft\web\Controller
 
     private function getRevenueQuery($min, $max, $request)
     {
-        $query = Order::find()
-            ->isCompleted(true)
-            ->dateOrdered(['and', ">={$min}", "<{$max}"])
-            ->orderBy(implode(' ', [$request->getParam('sort') ?: 'dateOrdered', $request->getParam('dir') ?: 'asc']));
+        $taxQuery = (new Query())
+            ->select(['orderId', 'type', 'SUM(amount) as total'])
+            ->from('{{%commerce_orderadjustments}}')
+            ->andWhere(['type' => 'tax'])
+            ->groupBy(['orderId', 'type']);
 
-        $q = $request->getParam('q');
-        if (!empty($q)) {
-            $query = $query->search($q);
-        }
+        $discountQuery = (new Query())
+            ->select(['orderId', 'type', 'SUM(amount) as total'])
+            ->from('{{%commerce_orderadjustments}}')
+            ->andWhere(['type' => 'discount'])
+            ->groupBy(['orderId', 'type']);
+
+        $query = (new Query())
+            ->select(['orders.*', 'statuses.handle as orderStatus', 'taxAdjustment.total as totalTax', 'discountAdjustment.total as totalDiscount'])
+            ->from(['{{%commerce_orders}} orders'])
+            ->leftJoin('{{%commerce_orderstatuses}} statuses', '[[statuses.id]] = [[orders.orderStatusId]]')
+            ->leftJoin(['taxAdjustment' => $taxQuery], '[[taxAdjustment.orderId]] = [[orders.id]]')
+            ->leftJoin(['discountAdjustment' => $discountQuery], '[[taxAdjustment.orderId]] = [[orders.id]]');
+
+        $query
+            ->andWhere(['isCompleted' => true])
+            ->andWhere(['>=', 'dateOrdered', Db::prepareDateForDb($min)])
+            ->andWhere(['<', 'dateOrdered', Db::prepareDateForDb($max)])
+            ->orderBy(
+                implode(' ', [
+                    Craft::$app->request->getParam('sort') ?: 'dateOrdered',
+                    Craft::$app->request->getParam('dir') ?: 'asc'
+                ])
+            );
+
+        // TODO:
+        // $q = $request->getParam('q');
+        // if (!empty($q)) {
+        //     $query = $query->search($q);
+        // }
 
         $rows = collect($query->all());
         return $rows;

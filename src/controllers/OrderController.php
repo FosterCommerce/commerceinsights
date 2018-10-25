@@ -11,7 +11,8 @@ use fostercommerce\commerceinsights\services\ParamParser;
 use Tightenco\Collect\Support\Collection;
 use yii\web\Response;
 use craft\commerce\Plugin as CommercePlugin;
-use craft\commerce\elements\Order;
+use craft\db\Query;
+use craft\helpers\Db;
 
 class OrderController extends \craft\web\Controller
 {
@@ -32,36 +33,55 @@ class OrderController extends \craft\web\Controller
         $this->params = Plugin::getInstance()->paramParser;
     }
 
-    /**
-     * Index of orders
-     */
     public function actionOrderIndex($format='html')
     {
+        $statuses = CommercePlugin::getInstance()->orderStatuses;
+
         $min = $this->params->start();
         $max = $this->params->end();
 
-        $query = Order::find();
+        $taxQuery = (new Query())
+            ->select(['orderId', 'type', 'SUM(amount) as total'])
+            ->from('{{%commerce_orderadjustments}}')
+            ->andWhere(['type' => 'tax'])
+            ->groupBy(['orderId', 'type']);
+
+        $discountQuery = (new Query())
+            ->select(['orderId', 'type', 'SUM(amount) as total'])
+            ->from('{{%commerce_orderadjustments}}')
+            ->andWhere(['type' => 'discount'])
+            ->groupBy(['orderId', 'type']);
+
+        $query = (new Query())
+            ->select(['orders.*', 'statuses.handle as orderStatus', 'taxAdjustment.total as totalTax', 'discountAdjustment.total as totalDiscount'])
+            ->from(['{{%commerce_orders}} orders'])
+            ->leftJoin('{{%commerce_orderstatuses}} statuses', '[[statuses.id]] = [[orders.orderStatusId]]')
+            ->leftJoin(['taxAdjustment' => $taxQuery], '[[taxAdjustment.orderId]] = [[orders.id]]')
+            ->leftJoin(['discountAdjustment' => $discountQuery], '[[taxAdjustment.orderId]] = [[orders.id]]');
 
         $status = Craft::$app->request->getParam('status');
         if ($status) {
-            $query->orderStatus($status);
+            $query->andWhere(['statuses.handle' => $status]);
         }
 
         $query
-            ->isCompleted(true)
-            ->dateOrdered(['and', ">={$min}", "<{$max}"])
+            ->andWhere(['isCompleted' => true])
+            ->andWhere(['>=', 'dateOrdered', Db::prepareDateForDb($min)])
+            ->andWhere(['<', 'dateOrdered', Db::prepareDateForDb($max)])
             ->orderBy(
                 implode(' ', [
                     Craft::$app->request->getParam('sort') ?: 'dateOrdered',
                     Craft::$app->request->getParam('dir') ?: 'asc'
-                    ])
+                ])
             );
 
-        $q = Craft::$app->request->getParam('q');
-        if (!empty($q)) {
-            $query = $query->search($q);
-        }
+        // TODO:
+        // $q = Craft::$app->request->getParam('q');
+        // if (!empty($q)) {
+        //     $query = $query->search($q);
+        // }
 
+        $data = $query->all();
         $rows = collect($query->all());
 
         $formatterClass = BaseFormatter::getFormatter(Orders::class);
@@ -77,7 +97,7 @@ class OrderController extends \craft\web\Controller
 
         $data = [
             'totals' => $totalsHtml,
-            'statuses' => CommercePlugin::getInstance()->orderStatuses->getAllOrderStatuses(),
+            'statuses' => $statuses->getAllOrderStatuses(),
             'formatter' => $formatter::$key,
             'chartShowsCurrency' => $formatter->showsCurrency(),
             'chartData' => $formatter->format(),

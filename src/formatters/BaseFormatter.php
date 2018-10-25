@@ -7,6 +7,7 @@ use fostercommerce\commerceinsights\Plugin;
 use fostercommerce\commerceinsights\services\ParamParser;
 use Tightenco\Collect\Support\Collection;
 use yii\web\HttpException;
+use DateTime;
 
 abstract class BaseFormatter
 {
@@ -44,7 +45,7 @@ abstract class BaseFormatter
         $this->data = $data;
         $this->groupedData = $this->data
             ->mapToGroups(function ($item) {
-                return [$item->dateOrdered->format($this->stepFormat) => $item];
+                return [(new DateTime($item['dateOrdered']))->format($this->stepFormat) => $item];
             });
     }
 

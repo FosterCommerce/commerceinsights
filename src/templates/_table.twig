@@ -37,12 +37,12 @@
     <tbody>
     {% for order in data %}
         <tr>
-            <td>{{ order.dateOrdered.format('m/d/Y') }}</td>
+            <td>{{ order.dateOrdered|date('m/d/Y') }}</td>
             <td><abbr title="{{ order.number }}"><a href="/admin/commerce/orders/{{ order.id }}">{{ order.number|slice(0,8) }}</a></abbr></td>
             <td>{{ order.orderStatus }}</td>
-            <td>{{ order.totalPrice|currency }}</td>
-            <td>{{ order.getLineItems()[0].getAdjustmentsTotalByType('tax')|default(0)|currency }}</td>
-            <td>{{ order.getAdjustmentsTotalByType('discount')|currency }}</td>
+            <td>{{ order.itemTotal|currency }}</td>
+            <td>{{ order.totalTax|default(0)|currency }}</td>
+            <td>{{ order.totalDiscount|default(0)|currency }}</td>
             <td>{{ order.totalPaid|currency }}</td>
             <td>{{ order.email }}</td>
         </tr>
