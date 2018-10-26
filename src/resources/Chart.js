@@ -95,7 +95,7 @@ export default class SomeChartLib {
     }
 
     import('chart.js')
-      .then(Chart => {
+      .then(({ Chart }) => {
         this.chartObj = new Chart(this.el, {
           type: 'line',
           data: {
@@ -135,7 +135,6 @@ export default class SomeChartLib {
           },
         })
       })
-
 
     return this
   }

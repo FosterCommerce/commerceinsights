@@ -12,20 +12,26 @@ class ChartBundle extends AssetBundle
         $craftEnvironment = defined('CRAFT_ENVIRONMENT') ? CRAFT_ENVIRONMENT : 'production';
         $isProduction = $craftEnvironment === 'production';
 
-        // define the path that your publishable resources live
         $this->sourcePath = __DIR__ . '/../../dist/';
 
         $this->depends = [CpAsset::class];
 
-        // define the relative path to CSS/JS files that should be registered with the page
-        // when this asset bundle is registered
-        $this->js = [
-            $isProduction ? 'bundle.min.js' : 'bundle.js',
-        ];
+        $jsPattern = $isProduction ? "/\d+\\.bundle\\.min\\.js/" : "/\d+\\.bundle\\.js/";
+        $cssPattern = "/.+\\.css/";
 
-        $this->css = [
-            'styles.css',
-        ];
+        $files = scandir($this->sourcePath);
+        $jsFiles = [$isProduction ? 'bundle.min.js' : 'bundle.js'];
+        $cssFiles = [];
+        foreach($files as $file) {
+            if (preg_match($jsPattern, $file)) {
+                $jsFiles[] = $file;
+            } else if (preg_match($cssPattern, $file)) {
+                $cssFiles[] = $file;
+            }
+        }
+
+        $this->js = $jsFiles;
+        $this->css = $cssFiles;
 
         parent::init();
     }
