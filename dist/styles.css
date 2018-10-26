@@ -111,3 +111,10 @@ label[for="filter-toggle"]::after {
 .ci-total-value {
     font-size: 20px;
 }
+
+button.ci-clickable-query {
+  background: transparent;
+  border: none;
+  color: #0d78f2;
+  cursor: pointer;
+}

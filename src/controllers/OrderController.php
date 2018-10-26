@@ -75,11 +75,9 @@ class OrderController extends \craft\web\Controller
                 ])
             );
 
-        // TODO:
-        // $q = Craft::$app->request->getParam('q');
-        // if (!empty($q)) {
-        //     $query = $query->search($q);
-        // }
+        foreach ($this->params->search as $key => $value) {
+            $query->andWhere([$key => $value]);
+        }
 
         $data = $query->all();
         $rows = collect($query->all());
@@ -95,9 +93,16 @@ class OrderController extends \craft\web\Controller
             'totals' => $formatter->totals(),
         ]);
 
+        $orderStatuses = array_map(function ($status) {
+            return [
+                'label' => $status->name,
+                'value' => $status->handle,
+            ];
+        }, $statuses->getAllOrderStatuses());
+
         $data = [
             'totals' => $totalsHtml,
-            'statuses' => $statuses->getAllOrderStatuses(),
+            'statuses' => $orderStatuses,
             'formatter' => $formatter::$key,
             'chartShowsCurrency' => $formatter->showsCurrency(),
             'chartData' => $formatter->format(),
@@ -105,6 +110,7 @@ class OrderController extends \craft\web\Controller
             'max' => $max,
             'range' => $this->params->range(),
             'selectedStatus' => $status,
+            'q' => (object) $this->params->search,
             'chartTable' => $this->view->renderTemplate('commerceinsights/orders/_table', ['data' => $rows]),
         ];
 

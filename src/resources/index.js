@@ -33,6 +33,18 @@ $(function() {
     }
   }
 
+  const addQuery = ({ name, value }) => {
+    const dataEl = select('#q-data')
+    const queryData = JSON.parse(dataEl.dataset.queryData)
+    dataEl.dataset.queryData = JSON.stringify({
+      ...queryData,
+      [name]: value,
+    })
+
+    select('*[name="q"]').value = dataEl.dataset.queryData
+    debounce(loadData, 2000)()
+  }
+
   const loadData = () => {
     const formatter = document.querySelector('*[name="formatter"]').value
     const startDate = format(
@@ -75,6 +87,7 @@ $(function() {
         chart.draw()
 
         select('.elements').innerHTML = res.data.chartTable
+        init(select('.elements'))
 
         if (res.data.summary) {
           const summaryEl = select('.ci-summary')
@@ -116,40 +129,54 @@ $(function() {
       })
   }
 
-  select('[name="q"], .query-extra, .query-extra > *').addEventListener(
-    'input',
-    debounce(loadData, 2000),
-  )
+  const init = scope => {
+    selectAll('[name="q"], .query-extra, .query-extra > *', scope).forEach(el =>
+      el.addEventListener('input', debounce(loadData, 2000)),
+    )
 
-  selectAll('[name="start[date]"],[name="end[date]"]').forEach(el => {
-    const debouncedLoad = debounce(loadData, 2000)
-    $(el).datepicker('option', {
-      onSelect: () => {
-        select('#range option[value=""]').selected = true
-        debouncedLoad()
-      },
+    selectAll('[name="start[date]"],[name="end[date]"]', scope).forEach(el => {
+      const debouncedLoad = debounce(loadData, 2000)
+      $(el).datepicker('option', {
+        onSelect: () => {
+          select('#range option[value=""]').selected = true
+          debouncedLoad()
+        },
+      })
     })
-  })
 
-  selectAll('#sidebar-ranges a').forEach(el =>
-    el.addEventListener('click', event => {
-      const current = select('#sidebar-ranges a.sel')
-      if (current) {
-        current.classList.toggle('sel')
-      }
-      event.target.classList.toggle('sel')
+    selectAll('#sidebar-ranges a', scope).forEach(el =>
+      el.addEventListener('click', event => {
+        const current = select('#sidebar-ranges a.sel')
+        if (current) {
+          current.classList.toggle('sel')
+        }
+        event.target.classList.toggle('sel')
 
-      setDates(event.target.dataset.range)
-    }),
-  )
+        setDates(event.target.dataset.range)
+      }),
+    )
 
-  select('#range').addEventListener('change', () => {
-    const value = select('#range option:checked').value
-    setDates(value)
-  })
+    selectAll('.ci-clickable-query', scope).forEach(el =>
+      el.addEventListener('click', event => {
+        addQuery({
+          name: el.dataset.qName,
+          value: el.dataset.qValue,
+        })
 
-  select('.ci-actions').addEventListener('submit', function(event) {
-    event.preventDefault()
-    loadData()
-  })
+        event.preventDefault()
+      }),
+    )
+
+    select('#range', scope).addEventListener('change', () => {
+      const value = select('#range option:checked').value
+      setDates(value)
+    })
+
+    select('.ci-actions', scope).addEventListener('submit', function(event) {
+      event.preventDefault()
+      loadData()
+    })
+  }
+
+  init()
 })

@@ -1,5 +1,5 @@
 {% extends "_layouts/cp" %}
-{%- from "_includes/forms" import text -%}
+{%- from "_includes/forms" import text, select -%}
 
 {% set title = "Orders" | t('commerceinsights') %}
 {% set selectedSubnavItem = "orders" %}
@@ -60,20 +60,14 @@
     <div class="ci-spacing">
 
         <form method="get" class="ci-actions">
+            <div style="display:none" id="q-data" data-query-data="{{ q|json_encode }}"></div>
             <input type="hidden" name="formatter" value="{{ formatter }}">
-
-            <div class="select">
-                <select name="status" class="query-extra">
-                    {% for status in statuses %}
-                    <option
-                      {% if selectedStatus == status.handle %}selected{% endif %}
-                      value="{{status.handle}}">
-                      {# {{status.color}} #}
-                      {{status.name}}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
+            {{ select({
+              name: 'status',
+              class: 'query-extra',
+              options: statuses,
+              value: selectedStatus,
+            }) }}
             <div class="ci-action-search">
                 {#
                     We want to add ability to search beyond the Commerce Order model.
@@ -81,7 +75,7 @@
                 #}
                 {{ text({
                     name: "q",
-                    value: craft.app.request.getParam('q'),
+                    value: q|json_encode,
                     placeholder: "Search"|t('app')
                 }) }}
             </div>

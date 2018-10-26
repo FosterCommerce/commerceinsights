@@ -13,6 +13,7 @@ class ParamParser extends Component
     private $end;
     private $range;
     private $step;
+    private $search;
 
     public function __construct()
     {
@@ -65,6 +66,21 @@ class ParamParser extends Component
             $this->step = 60 * 60;
         } else {
             $this->step = 60 * 60 * 24;
+        }
+
+        $search = $request->getParam('q');
+
+        try {
+            $this->search = json_decode($search, true) ?: [];
+        } catch (\Exception $e) {
+            $this->search = [];
+        }
+    }
+
+    public function __get($property)
+    {
+        if (property_exists($this, $property)) {
+            return $this->$property;
         }
     }
 

@@ -94,47 +94,46 @@ export default class SomeChartLib {
       return
     }
 
-    import('chart.js')
-      .then(({ Chart }) => {
-        this.chartObj = new Chart(this.el, {
-          type: 'line',
-          data: {
-            datasets: [
+    import('chart.js').then(({ Chart }) => {
+      this.chartObj = new Chart(this.el, {
+        type: 'line',
+        data: {
+          datasets: [
+            {
+              label: '',
+              lineTension: 0,
+              data: this._data,
+              backgroundColor: '#36a2eb',
+            },
+          ],
+        },
+        options: {
+          legend: {
+            display: false,
+          },
+          scales: {
+            yAxes: [
               {
-                label: '',
-                lineTension: 0,
-                data: this._data,
-                backgroundColor: '#36a2eb',
+                ticks: {
+                  beginAtZero: true,
+                  callback: this.yAxesCallback.bind(this),
+                },
+              },
+            ],
+            xAxes: [
+              {
+                type: 'time',
+                time: {
+                  min: format(this._min, 'YYYY-MM-DDTHH:mm:ss.SSSZ'),
+                  max: format(this._max, 'YYYY-MM-DDTHH:mm:ss.SSSZ'),
+                  unit: calculateInterval(this._min, this._max),
+                },
               },
             ],
           },
-          options: {
-            legend: {
-              display: false,
-            },
-            scales: {
-              yAxes: [
-                {
-                  ticks: {
-                    beginAtZero: true,
-                    callback: this.yAxesCallback.bind(this),
-                  },
-                },
-              ],
-              xAxes: [
-                {
-                  type: 'time',
-                  time: {
-                    min: format(this._min, 'YYYY-MM-DDTHH:mm:ss.SSSZ'),
-                    max: format(this._max, 'YYYY-MM-DDTHH:mm:ss.SSSZ'),
-                    unit: calculateInterval(this._min, this._max),
-                  },
-                },
-              ],
-            },
-          },
-        })
+        },
       })
+    })
 
     return this
   }

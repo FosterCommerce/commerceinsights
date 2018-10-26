@@ -1,5 +1,7 @@
-const select = selector => document.querySelector(selector)
+const select = (selector, scope = document) =>
+  scope.querySelector(selector) || { addEventListener: () => {} }
 
-const selectAll = selector => document.querySelectorAll(selector)
+const selectAll = (selector, scope = document) =>
+  scope.querySelectorAll(selector)
 
 export { select, selectAll }

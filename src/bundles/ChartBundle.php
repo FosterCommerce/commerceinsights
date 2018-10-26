@@ -22,10 +22,10 @@ class ChartBundle extends AssetBundle
         $files = scandir($this->sourcePath);
         $jsFiles = [$isProduction ? 'bundle.min.js' : 'bundle.js'];
         $cssFiles = [];
-        foreach($files as $file) {
+        foreach ($files as $file) {
             if (preg_match($jsPattern, $file)) {
                 $jsFiles[] = $file;
-            } else if (preg_match($cssPattern, $file)) {
+            } elseif (preg_match($cssPattern, $file)) {
                 $cssFiles[] = $file;
             }
         }
