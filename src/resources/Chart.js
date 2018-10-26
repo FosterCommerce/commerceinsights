@@ -1,4 +1,3 @@
-import Chart from 'chart.js'
 import parseDate from 'date-fns/parse'
 import startOfHour from 'date-fns/start_of_hour'
 import startOfDay from 'date-fns/start_of_day'
@@ -95,44 +94,48 @@ export default class SomeChartLib {
       return
     }
 
-    this.chartObj = new Chart(this.el, {
-      type: 'line',
-      data: {
-        datasets: [
-          {
-            label: '',
-            lineTension: 0,
-            data: this._data,
-            backgroundColor: '#36a2eb',
+    import('chart.js')
+      .then(Chart => {
+        this.chartObj = new Chart(this.el, {
+          type: 'line',
+          data: {
+            datasets: [
+              {
+                label: '',
+                lineTension: 0,
+                data: this._data,
+                backgroundColor: '#36a2eb',
+              },
+            ],
           },
-        ],
-      },
-      options: {
-        legend: {
-          display: false,
-        },
-        scales: {
-          yAxes: [
-            {
-              ticks: {
-                beginAtZero: true,
-                callback: this.yAxesCallback.bind(this),
-              },
+          options: {
+            legend: {
+              display: false,
             },
-          ],
-          xAxes: [
-            {
-              type: 'time',
-              time: {
-                min: format(this._min, 'YYYY-MM-DDTHH:mm:ss.SSSZ'),
-                max: format(this._max, 'YYYY-MM-DDTHH:mm:ss.SSSZ'),
-                unit: calculateInterval(this._min, this._max),
-              },
+            scales: {
+              yAxes: [
+                {
+                  ticks: {
+                    beginAtZero: true,
+                    callback: this.yAxesCallback.bind(this),
+                  },
+                },
+              ],
+              xAxes: [
+                {
+                  type: 'time',
+                  time: {
+                    min: format(this._min, 'YYYY-MM-DDTHH:mm:ss.SSSZ'),
+                    max: format(this._max, 'YYYY-MM-DDTHH:mm:ss.SSSZ'),
+                    unit: calculateInterval(this._min, this._max),
+                  },
+                },
+              ],
             },
-          ],
-        },
-      },
-    })
+          },
+        })
+      })
+
 
     return this
   }

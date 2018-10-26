@@ -46,7 +46,7 @@ $(function() {
 
     // Get additional query params
     const extra = {}
-    selectAll('.query-extra').forEach(el => {
+    selectAll('.query-extra, .query-extra > *').forEach(el => {
       extra[el.name] = el.value
     })
 
@@ -116,7 +116,7 @@ $(function() {
       })
   }
 
-  select('[name="q"], .query-extra').addEventListener(
+  select('[name="q"], .query-extra, .query-extra > *').addEventListener(
     'input',
     debounce(loadData, 2000),
   )
