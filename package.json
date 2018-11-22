@@ -11,9 +11,9 @@
   "dependencies": {
     "axios": "^0.18.0",
     "chart.js": "^2.7.2",
-    "date-fns": "^1.29.0",
     "lodash": "^4.17.11",
-    "qs": "^6.5.2"
+    "qs": "^6.5.2",
+    "vue-router": "^3.0.1"
   },
   "devDependencies": {
     "cross-env": "^5.2.0",

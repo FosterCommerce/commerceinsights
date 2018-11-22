@@ -30,7 +30,7 @@ class DateTimeHelper
                     $startMonth = 10;
                 }
 
-                $date = new DateTime("{$year}-{$month}-1");
+                $date = new DateTime("{$year}-{$startMonth}-1");
                 break;
             case 'y':
                 $year = date('y');
@@ -106,10 +106,12 @@ class DateTimeHelper
                 ];
             },
             'prev-quarter' => function () {
-                return [
+                $x = [
                     self::startOf('q')->modify('-3 months'),
                     self::endOf('q')->modify('-3 months'),
                 ];
+
+                return $x;
             },
             'prev-year' => function () {
                 return [

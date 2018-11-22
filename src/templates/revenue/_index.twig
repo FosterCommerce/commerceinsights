@@ -65,7 +65,7 @@
           <div class="ci-totals">{{totals|raw}}</div>
 
           <div class="chart">
-              <canvas id="chart" width="900" height="300" data-chart-data="{{ chartData|json_encode }}" data-chart-start="{{ min }}" data-chart-end="{{ max }}" data-chart-shows-currency="{{ chartShowsCurrency }}"></canvas>
+              <canvas id="chart" data-chart-data="{{ chartData|json_encode }}" data-chart-start="{{ min }}" data-chart-end="{{ max }}" data-chart-shows-currency="{{ chartShowsCurrency }}"></canvas>
           </div>
 
           <form method="get" class="ci-actions">

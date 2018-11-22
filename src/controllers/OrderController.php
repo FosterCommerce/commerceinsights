@@ -93,15 +93,16 @@ class OrderController extends \craft\web\Controller
             'totals' => $formatter->totals(),
         ]);
 
-        $orderStatuses = array_map(function ($status) {
-            return [
+        $orderStatuses = [];
+        foreach ($statuses->getAllOrderStatuses() as $status) {
+            $orderStatuses[] = [
                 'label' => $status->name,
                 'value' => $status->handle,
             ];
-        }, $statuses->getAllOrderStatuses());
+        }
 
         $data = [
-            'totals' => $totalsHtml,
+            'totals' => $formatter->totals(),
             'statuses' => $orderStatuses,
             'formatter' => $formatter::$key,
             'chartShowsCurrency' => $formatter->showsCurrency(),
@@ -110,14 +111,14 @@ class OrderController extends \craft\web\Controller
             'max' => $max,
             'range' => $this->params->range(),
             'selectedStatus' => $status,
-            'q' => (object) $this->params->search,
-            'chartTable' => $this->view->renderTemplate('commerceinsights/orders/_table', ['data' => $rows]),
+            'search' => (object) $this->params->search,
+            'tableData' => $rows,
         ];
 
-        if (Craft::$app->request->isAjax || $format == 'json') {
+        // if (Craft::$app->request->isAjax || $format == 'json') {
             return $this->asJson($data);
-        }
+        // }
 
-        return $this->renderTemplate('commerceinsights/orders/_index', $data);
+        // return $this->renderTemplate('commerceinsights/orders/_index', $data);
     }
 }

@@ -73,11 +73,11 @@ class Plugin extends \craft\base\Plugin
         $item['label'] = Craft::t('commerceinsights', 'Commerce Insights');
         $item['badgeCount'] = 0;
         $item['subnav'] = [
-            'dashboard' => ['label' => Craft::t('commerceinsights', 'Dashboard'), 'url' => 'commerceinsights'],
-            'revenue' => ['label' => Craft::t('commerceinsights', 'Revenue'), 'url' => 'commerceinsights/revenue'],
-            'orders' => ['label' => Craft::t('commerceinsights', 'Orders'), 'url' => 'commerceinsights/orders'],
-            'customers' => ['label' => Craft::t('commerceinsights', 'Customers'), 'url' => 'commerceinsights/customers'],
-            'products' => ['label' => Craft::t('commerceinsights', 'Products'), 'url' => 'commerceinsights/products'],
+            'dashboard' => ['label' => Craft::t('commerceinsights', 'Dashboard'), 'url' => 'commerceinsights/view/dashboard'],
+            'revenue' => ['label' => Craft::t('commerceinsights', 'Revenue'), 'url' => 'commerceinsights/view/revenue'],
+            'orders' => ['label' => Craft::t('commerceinsights', 'Orders'), 'url' => 'commerceinsights/view/orders'],
+            // 'customers' => ['label' => Craft::t('commerceinsights', 'Customers'), 'url' => 'commerceinsights/customers'],
+            // 'products' => ['label' => Craft::t('commerceinsights', 'Products'), 'url' => 'commerceinsights/products'],
         ];
         return $item;
     }

@@ -1,11 +1,11 @@
-{% extends "_layouts/cp" %}
+{% extends "_layouts/basecp" %}
 {%- from "_includes/forms" import text -%}
 
 {% set title = "Dashboard"|t('commerceinsights') %}
 {% set selectedSubnavItem = "dashboard" %}
 {% set url = craft.url.create %}
 
-{% block content %}
+{% block body %}
     <div class="ci-spacing">
 
         <h2>Statistics</h2>

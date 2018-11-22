@@ -68,7 +68,7 @@ class ParamParser extends Component
             $this->step = 60 * 60 * 24;
         }
 
-        $search = $request->getParam('q');
+        $search = $request->getParam('search');
 
         try {
             $this->search = json_decode($search, true) ?: [];

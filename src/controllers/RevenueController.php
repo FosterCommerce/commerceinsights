@@ -125,19 +125,19 @@ class RevenueController extends \craft\web\Controller
         $data = [
             'formatter' => $formatter::$key,
             'summary' => $summaryHtml,
-            'totals' => $totalsHtml,
+            'totals' => $totals, // $totalsHtml,
             'chartShowsCurrency' => $formatter->showsCurrency(),
             'chartData' => $formatter->format(),
             'min' => $min,
             'max' => $max,
             'range' => $this->params->range(),
-            'chartTable' => $this->view->renderTemplate('commerceinsights/revenue/_table', ['data' => $rows]),
+            'tableData' => $rows,
         ];
 
-        if ($request->isAjax || $format == 'json') {
+        // if ($request->isAjax || $format == 'json') {
             return $this->asJson($data);
-        }
+        // }
 
-        return $this->renderTemplate('commerceinsights/revenue/_index', $data);
+        // return $this->renderTemplate('commerceinsights/revenue/_index', $data);
     }
 }
