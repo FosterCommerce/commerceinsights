@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import rowCellLink from './cells/RowCellLink'
 import DateCell from './cells/DateCell'
+import EmailCell from './cells/EmailCell'
 import capitalize from '../../util/capitalize'
 
 const OrderNumberCell = rowCellLink({
@@ -54,7 +55,11 @@ export default new Vue({
         sortKey: 'paidStatus',
         format: capitalize,
       },
-      { key: 'email', label: 'Email' },
+      {
+        key: 'email',
+        label: 'Email',
+        component: EmailCell,
+      },
     ],
     tableSortBy: null,
     tableSortOrder: 'desc',

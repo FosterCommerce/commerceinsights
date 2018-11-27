@@ -35,6 +35,10 @@ export default {
       this.$emit('input', e.target.value)
     },
     isSelected(item) {
+      if (this.value === null) {
+        return item.value === ''
+      }
+
       return item.value === this.value
     },
   },

@@ -1,5 +1,5 @@
 <template>
-  <td>
+  <td :class="{thin: column.thin}">
     <component
       v-if="column.component"
       :is="column.component"

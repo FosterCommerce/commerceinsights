@@ -52,12 +52,23 @@ class OrderController extends \craft\web\Controller
             ->andWhere(['type' => 'discount'])
             ->groupBy(['orderId', 'type']);
 
+        $userQuery = (new Query())
+            ->select(['id', 'email'])
+            ->from('{{%users}}');
+
         $query = (new Query())
-            ->select(['orders.*', 'statuses.handle as orderStatus', 'taxAdjustment.total as totalTax', 'discountAdjustment.total as totalDiscount'])
+            ->select([
+                'orders.*',
+                'statuses.handle as orderStatus',
+                'taxAdjustment.total as totalTax',
+                'discountAdjustment.total as totalDiscount',
+                'user.id as userId',
+            ])
             ->from(['{{%commerce_orders}} orders'])
             ->leftJoin('{{%commerce_orderstatuses}} statuses', '[[statuses.id]] = [[orders.orderStatusId]]')
             ->leftJoin(['taxAdjustment' => $taxQuery], '[[taxAdjustment.orderId]] = [[orders.id]]')
-            ->leftJoin(['discountAdjustment' => $discountQuery], '[[taxAdjustment.orderId]] = [[orders.id]]');
+            ->leftJoin(['discountAdjustment' => $discountQuery], '[[taxAdjustment.orderId]] = [[orders.id]]')
+            ->leftJoin(['user' => $userQuery], '[[user.email]] = [[orders.email]]');
 
         $status = Craft::$app->request->getParam('status');
         if ($status) {

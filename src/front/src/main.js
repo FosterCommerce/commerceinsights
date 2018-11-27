@@ -4,6 +4,7 @@ import axios from 'axios'
 import App from './App'
 import Orders from './pages/Orders'
 import Revenue from './pages/Revenue'
+import Saved from './pages/Saved'
 
 Vue.config.productionTip = false
 
@@ -17,12 +18,15 @@ Object.defineProperty(Vue.prototype, '$axios', {
   get: () => axiosInstance,
 })
 
+const queryProps = route => ({query: route.query})
+
 const router = new VueRouter({
   mode: 'history',
   base: '/admin/commerceinsights/view',
   routes: [
-    { path: '/revenue', component: Revenue },
-    { path: '/orders', component: Orders },
+    { path: '/revenue', component: Revenue, props: queryProps },
+    { path: '/orders', component: Orders, props: queryProps },
+    { path: '/saved', component: Saved },
   ],
 })
 

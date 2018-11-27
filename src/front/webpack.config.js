@@ -4,7 +4,7 @@ const { VueLoaderPlugin } = require('vue-loader')
 module.exports = {
   mode: 'development',
   entry: [
-    './src/main.js'
+    './src/main.js',
   ],
   resolve: {
     alias: {

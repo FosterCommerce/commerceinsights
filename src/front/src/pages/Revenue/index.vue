@@ -4,7 +4,15 @@
       <RangeSelect v-model="state.range" />
       <Date @input="startDateChanged" :value="state.startDate" />
       <Date @input="endDateChanged" :value="state.endDate" />
+      <ActionButton label="Save Report" icon="add" @click="toggleModal" />
     </template>
+
+    <SaveReportModal
+      v-if="saveModalVisible"
+      report-type="orders"
+      :query="this.state.query"
+      @hide="toggleModal"
+    />
 
     <nav slot="sidebar">
       <ul id="sidebar-ranges">
@@ -61,17 +69,18 @@ import RevenueTable from './Table'
 import Layout from '../../components/craft/Layout'
 import Date from '../../components/craft/forms/Date'
 import RangeSelect from '../../components/RangeSelect'
+import ActionButton from '../../components/craft/ActionButton'
+import SaveReportModal, {mixin as saveReportMixin} from '../../components/SaveReportModal'
 import Chart from '../../components/DateLineChart'
+import savedReport from '../../mixins/savedReport'
 
 export default {
   name: 'Revenue',
+  mixins: [saveReportMixin, savedReport],
   data: () => ({
     state,
     shouldUpdate: true,
   }),
-  mounted() {
-    this.update()
-  },
   watch: {
     'state.query': function() {
       if (this.shouldUpdate) {
@@ -114,6 +123,8 @@ export default {
     Date,
     RangeSelect,
     Chart,
+    ActionButton,
+    SaveReportModal,
   },
 }
 </script>
