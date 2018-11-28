@@ -46,10 +46,12 @@ export default {
             this.saveReportError = true
           } else {
             this.$emit('hide')
+            this.$cp.displayNotice('Report saved')
           }
         })
         .catch(err => {
           this.saveReportError = true
+          this.$cp.displayError('Unknown error occurred')
         })
     },
   },

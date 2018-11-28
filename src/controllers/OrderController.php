@@ -33,6 +33,13 @@ class OrderController extends \craft\web\Controller
         $this->params = Plugin::getInstance()->paramParser;
     }
 
+    private function asCurrency($value)
+    {
+        return isset($value)
+            ? Craft::$app->formatter->asCurrency($value)
+            : Craft::$app->formatter->asCurrency(0);
+    }
+
     public function actionOrderIndex($format='html')
     {
         $statuses = CommercePlugin::getInstance()->orderStatuses;
@@ -112,6 +119,14 @@ class OrderController extends \craft\web\Controller
             ];
         }
 
+        $formattedRows = $rows->map(function ($row) {
+            $row['totalPrice'] = $this->asCurrency($row['totalPrice']);
+            $row['totalTax'] = $this->asCurrency($row['totalTax']);
+            $row['totalDiscount'] = $this->asCurrency($row['totalDiscount']);
+            $row['totalPaid'] = $this->asCurrency($row['totalPaid']);
+            return $row;
+        });
+
         $data = [
             'totals' => $formatter->totals(),
             'statuses' => $orderStatuses,
@@ -123,7 +138,7 @@ class OrderController extends \craft\web\Controller
             'range' => $this->params->range(),
             'selectedStatus' => $status,
             'search' => (object) $this->params->search,
-            'tableData' => $rows,
+            'tableData' => $formattedRows,
         ];
 
         // if (Craft::$app->request->isAjax || $format == 'json') {

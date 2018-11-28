@@ -9,7 +9,7 @@
 
     <SaveReportModal
       v-if="saveModalVisible"
-      report-type="orders"
+      report-type="revenue"
       :query="this.state.query"
       @hide="toggleModal"
     />
@@ -53,8 +53,6 @@
           <input type="hidden" name="endDate" value="" />
         </div>
       </form>
-
-      <RevenueTable />
     </div>
   </Layout>
 </template>
@@ -65,7 +63,6 @@ import format from 'date-fns/format'
 import parse from 'date-fns/parse'
 import subDays from 'date-fns/sub_days'
 import state from './state'
-import RevenueTable from './Table'
 import Layout from '../../components/craft/Layout'
 import Date from '../../components/craft/forms/Date'
 import RangeSelect from '../../components/RangeSelect'
@@ -108,7 +105,6 @@ export default {
           this.state.chartData = data.chartData
           this.state.startDate = data.min
           this.state.endDate = format(subDays(parse(data.max), 1), 'YYYY-MM-DD')
-          this.state.results = data.tableData
           this.state.totals = data.totals
           this.state.summary = data.summary
           this.state.range = data.range
@@ -118,7 +114,6 @@ export default {
     },
   },
   components: {
-    RevenueTable,
     Layout,
     Date,
     RangeSelect,

@@ -1,21 +1,23 @@
 <template>
-  <div>
-    <div class="modal" :class="{[className]: !!className}">
-      <template v-if="!$slots['main']">
-        <div class="body">
-          <slot name="body"></slot>
-        </div>
-      </template>
-      <template v-else>
-        <header v-if="!!$slots['header']" class="header">
-          <slot name="header"></slot>
-        </header>
-        <div class="main">
-          <slot name="main"></slot>
-        </div>
-      </template>
+  <transition @leave="onLeave">
+    <div>
+      <div class="modal" :class="{[className]: !!className}">
+        <template v-if="!$slots['main']">
+          <div class="body">
+            <slot name="body"></slot>
+          </div>
+        </template>
+        <template v-else>
+          <header v-if="!!$slots['header']" class="header">
+            <slot name="header"></slot>
+          </header>
+          <div class="main">
+            <slot name="main"></slot>
+          </div>
+        </template>
+      </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
@@ -52,6 +54,16 @@ export default {
   },
   computed: {
     shadeClass: ({ dark }) => ['modal-shade', dark && 'dark'].filter(s => !!s).join(' '),
+  },
+  methods: {
+    onLeave (el, done) {
+      if (this.modal.visible) {
+        this.modal.hide();
+        setTimeout(() => {
+          done()
+        }, Garnish.FX_DURATION)
+      }
+    }
   },
 }
 </script>

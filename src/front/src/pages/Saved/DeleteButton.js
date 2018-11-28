@@ -27,10 +27,11 @@ const DeleteButton = () => ({
         .get(`saved/delete/${this.data.id}`)
         .then(({ data }) => {
           if (!data.success) {
-            Craft.cp.displayError('Unable to delete saved report')
+            this.$cp.displayError('Unable to delete saved report')
             return false
           }
 
+          this.$cp.displayNotice('Saved report deleted')
           this.state.reports = this.state.reports.filter(item => item.id !== this.data.id)
         })
 
