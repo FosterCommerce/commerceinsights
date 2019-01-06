@@ -39,6 +39,7 @@
 
       <Chart
         :chart-data="state.chartData"
+        :secondary-chart-data="state.secondaryChartData"
         :start="state.startDate"
         :end="state.endDate"
       />
@@ -103,6 +104,7 @@ export default {
         .then(({ data }) => {
           this.shouldUpdate = false
           this.state.chartData = data.chartData
+          this.state.secondaryChartData = data.secondaryChartData
           this.state.startDate = data.min
           this.state.endDate = format(subDays(parse(data.max), 1), 'YYYY-MM-DD')
           this.state.totals = data.totals

@@ -9,6 +9,7 @@ export default new Vue({
     tableSortBy: null,
     tableSortOrder: 'desc',
     chartData: [],
+    secondaryChartData: [],
     startDate: null,
     endDate: null,
   }),

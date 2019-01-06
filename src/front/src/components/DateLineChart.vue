@@ -45,12 +45,13 @@ const startOf = (interval, value) => {
   }
 }
 
-const groupData = (min, max, data) => {
+const formatDay = (min, max, day) => {
   const interval = calculateInterval(min, max)
+  return format(startOf(interval, parseDate(day)), 'YYYY-MM-DDTHH:mm:ss.SSSZ')
+}
 
-  const formatDay = day =>
-    format(startOf(interval, parseDate(day.x)), 'YYYY-MM-DDTHH:mm:ss.SSSZ')
-  const groupedResults = groupBy(data, formatDay)
+const groupData = (min, max, data) => {
+  const groupedResults = groupBy(data, day => formatDay(min, max, day.x))
 
   const result = Object.keys(groupedResults).map(key => ({
     x: key,
@@ -60,18 +61,55 @@ const groupData = (min, max, data) => {
   return result
 }
 
+const normalizeData = (primary, secondary) =>
+  primary
+    .filter((o, index) => secondary[index])
+    .map((o, index) => {
+      const hasSecondary = secondary[index]
+      return {
+        x: o.x,
+        y: secondary[index].y,
+        secondary: secondary[index].x,
+      }
+    })
+
 const options = vm => ({
   legend: {
     display: false,
   },
+  tooltips: {
+    mode: 'index',
+    position: 'nearest',
+    intersect: false,
+    callbacks: {
+      label: (item, data) => {
+        const {datasets} = data
+
+        const originalItem = datasets[item.datasetIndex].data[item.index]
+
+        let xLabel = item.xLabel
+        if (originalItem.secondary) {
+          xLabel = originalItem.secondary
+        }
+
+        xLabel = format(xLabel, 'MM/YYYY')
+        return `${xLabel}: ${item.yLabel}`;
+      },
+      title: () => '',
+    },
+  },
+  hover: {
+    mode: 'index',
+    intersect: true
+  },
   scales: {
     yAxes: [
       {
+        type: 'linear',
+        position: 'left',
+        id: 'primary',
         ticks: {
           beginAtZero: true,
-          callback: value => {
-            return value
-          }, //this.yAxesCallback.bind(this),
         },
       },
     ],
@@ -94,36 +132,50 @@ export default {
   props: [
     'start',
     'end',
-    'chartData'
+    'chartData',
+    'secondaryChartData',
   ],
-  // render() {
-  //   return (
-  //     <Chart
-  //       chartData={this.transformedData}
-  //       options={this.options}
-  //       min={this.min}
-  //       max={this.max}
-  //       width={900}
-  //     />
-  //   )
-  // },
   computed: {
-    transformedData: ({ chartData, min, max }) => ({
-      datasets: [
-        {
-          label: '',
-          lineTension: 0,
-          data: groupData(min, max, chartData),
-          backgroundColor: '#36a2eb',
-        },
-      ],
-    }),
+    transformedData: ({ chartData, secondaryChartData, min, max }) => {
+
+      const groupedData = groupData(min, max, chartData)
+      const datasets = {
+        datasets: [
+          {
+            label: 'Current',
+            // lineTension: 0,
+            data: groupedData,
+            backgroundColor: 'rgb(54, 162, 235)',
+            borderColor: 'rgb(54, 162, 235)',
+            fill: false,
+          },
+        ],
+      }
+
+      if (secondaryChartData) {
+        datasets.datasets.push({
+          label: 'Previous',
+          display: true,
+          data: normalizeData(groupedData, groupData(min, max, secondaryChartData)),
+          backgroundColor: 'rgba(75, 192, 192, 0.5)',
+          borderColor: 'rgba(75, 192, 192, 0.5)',
+          fill: false,
+        })
+      }
+
+      return datasets
+    },
     min: ({ start }) => parseDate(start),
     max: ({ end }) => parseDate(end),
   },
   watch: {
     transformedData () {
       this.chart.data.datasets[0].data = this.transformedData.datasets[0].data
+
+      if (this.secondaryChartData) {
+        this.chart.data.datasets[1].data = this.transformedData.datasets[1].data
+      }
+
       this.chart.options = options(this)
       this.chart.update()
     },

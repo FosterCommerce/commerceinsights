@@ -13,6 +13,7 @@ use yii\web\Response;
 use craft\commerce\Plugin as CommercePlugin;
 use craft\db\Query;
 use craft\helpers\Db;
+use DateTime;
 
 class OrderController extends \craft\web\Controller
 {
@@ -40,13 +41,8 @@ class OrderController extends \craft\web\Controller
             : Craft::$app->formatter->asCurrency(0);
     }
 
-    public function actionOrderIndex($format='html')
+    public function getOrderQuery($min, $max)
     {
-        $statuses = CommercePlugin::getInstance()->orderStatuses;
-
-        $min = $this->params->start();
-        $max = $this->params->end();
-
         $taxQuery = (new Query())
             ->select(['orderId', 'type', 'SUM(amount) as total'])
             ->from('{{%commerce_orderadjustments}}')
@@ -97,11 +93,25 @@ class OrderController extends \craft\web\Controller
             $query->andWhere([$key => $value]);
         }
 
-        $data = $query->all();
-        $rows = collect($query->all());
+        return collect($query->all());
+    }
+
+    public function actionOrderIndex($format='html')
+    {
+        $statuses = CommercePlugin::getInstance()->orderStatuses;
+
+        $min = $this->params->start();
+        $max = $this->params->end();
+
+        $currMin = new DateTime($min);
+        $prevMin = (clone $currMin)->sub($currMin->diff(new DateTime($max)))->format('Y-m-d');
+
+        $rows = $this->getOrderQuery($min, $max);
+        $prevPeriodRows = $this->getOrderQuery($prevMin, $min);
 
         $formatterClass = BaseFormatter::getFormatter(Orders::class);
         $formatter = new $formatterClass($rows);
+        $prevPeriodFormatter = new $formatterClass($prevPeriodRows, $prevMin, $min);
 
         if ($format == 'csv') {
             return Plugin::getInstance()->csv->generate('orders', $formatter->csv());
@@ -133,6 +143,7 @@ class OrderController extends \craft\web\Controller
             'formatter' => $formatter::$key,
             'chartShowsCurrency' => $formatter->showsCurrency(),
             'chartData' => $formatter->format(),
+            'secondaryChartData' => $prevPeriodFormatter->format(),
             'min' => $min,
             'max' => $max,
             'range' => $this->params->range(),

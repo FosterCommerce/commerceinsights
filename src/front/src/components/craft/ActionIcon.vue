@@ -20,5 +20,7 @@ export default {
 </script>
 
 <style scoped>
-.icon.user:before { content: 'user'; }
+.icon.user:before {
+  content: 'user';
+}
 </style>

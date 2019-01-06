@@ -84,15 +84,15 @@ class RevenueController extends \craft\web\Controller
         $max = $this->params->end();
 
         $currMin = new DateTime($min);
-        $prevMin = (clone $currMin)->sub($currMin->diff(new DateTime($max)));
+        $prevMin = (clone $currMin)->sub($currMin->diff(new DateTime($max)))->format('Y-m-d');
 
         $formatterClass = BaseFormatter::getFormatter(Revenue::class);
 
         $rows = $this->getRevenueQuery($min, $max, $request);
-        $prevPeriodRows = $this->getRevenueQuery($prevMin->format('Y-m-d'), $min, $request);
+        $prevPeriodRows = $this->getRevenueQuery($prevMin, $min, $request);
 
         $formatter = new $formatterClass($rows);
-        $prevPeriodFormatter = new $formatterClass($prevPeriodRows);
+        $prevPeriodFormatter = new $formatterClass($prevPeriodRows, $prevMin, $min);
 
         $prevTotal = $prevPeriodFormatter->totalPaid();
         $diff = $formatter->totalPaid() - $prevTotal;
@@ -128,6 +128,7 @@ class RevenueController extends \craft\web\Controller
             'totals' => $totals, // $totalsHtml,
             'chartShowsCurrency' => $formatter->showsCurrency(),
             'chartData' => $formatter->format(),
+            'secondaryChartData' => $prevPeriodFormatter->format(),
             'min' => $min,
             'max' => $max,
             'range' => $this->params->range(),

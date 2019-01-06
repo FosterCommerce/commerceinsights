@@ -1,6 +1,7 @@
 'use strict'
 
 const { VueLoaderPlugin } = require('vue-loader')
+
 module.exports = {
   mode: 'development',
   entry: [
@@ -33,7 +34,11 @@ module.exports = {
         test: /\.css$/,
         use: [
           'vue-style-loader',
-          'css-loader',
+          {
+            loader: 'css-loader',
+            options: { importLoaders: 1 }
+          },
+          'postcss-loader',
         ]
       }
     ]

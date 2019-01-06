@@ -33,11 +33,11 @@ abstract class BaseFormatter
     /** @var Collection */
     protected $groupedData;
 
-    public function __construct($data)
+    public function __construct($data, $min = null, $max = null)
     {
         $this->params = Plugin::getInstance()->paramParser;
-        $this->min = $this->params->start();
-        $this->max = $this->params->end();
+        $this->min = $min ?: $this->params->start();
+        $this->max = $max ?: $this->params->end();
         $this->step = $this->params->step();
         $this->stepFormat = $this->params->stepFormat();
         $this->empty = $this->getEmptyCollection();

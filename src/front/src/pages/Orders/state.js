@@ -64,6 +64,7 @@ export default new Vue({
     tableSortBy: null,
     tableSortOrder: 'desc',
     chartData: [],
+    secondaryChartData: [],
     totals: null,
     startDate: null,
     endDate: null,

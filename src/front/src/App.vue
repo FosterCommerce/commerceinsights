@@ -3,6 +3,8 @@
 </template>
 
 <script>
+import './tailwind.css'
+
 export default {
   name: 'App',
 }
