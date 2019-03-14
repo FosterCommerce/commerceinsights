@@ -14,8 +14,8 @@
   "require": {
     "craftcms/cms": "^3.0.0",
     "nesbot/carbon": "^1.33",
-    "tightenco/collect": "^5.7",
-    "league/csv": "^9.1"
+    "tightenco/collect": "^5.5",
+    "league/csv": "^8.1|^9.0"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^2.13"
