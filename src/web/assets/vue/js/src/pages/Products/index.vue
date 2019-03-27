@@ -9,7 +9,7 @@
 
     <SaveReportModal
       v-if="saveModalVisible"
-      report-type="orders"
+      report-type="products"
       :query="this.state.query"
       @hide="toggleModal"
     />
