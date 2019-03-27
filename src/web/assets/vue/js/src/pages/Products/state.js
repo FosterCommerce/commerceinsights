@@ -6,6 +6,13 @@ const ProductCell = rowCellLink({
   labelF: (column, data) => data.productTitle,
 })
 
+const subTotalColumn = {
+  key: 'subTotal',
+  label: 'Revenue',
+  sortable: true,
+  sortKey: 'subTotal',
+}
+
 export default new Vue({
   data: () => ({
     formatter: 'revenue',
@@ -28,35 +35,27 @@ export default new Vue({
         sortable: true,
         sortKey: 'stock',
       },
-      // {
-      //   key: 'qtyOrders',
-      //   label: 'Total Orders',
-      //   sortable: true,
-      //   sortKey: 'qtyOrders',
-      // },
-      // {
-      //   key: 'qtySold',
-      //   label: 'Total Sold',
-      //   sortable: true,
-      //   sortKey: 'qtySold',
-      // },
-      // {
-      //   key: 'revenue',
-      //   label: 'Revenue',
-      //   sortable: true,
-      //   sortKey: 'revenue',
-      // },
+      {
+        key: 'orderCount',
+        label: 'Total Orders',
+        sortable: true,
+        sortKey: 'orderCount',
+      },
+      {
+        key: 'qty',
+        label: 'Total Sold',
+        sortable: true,
+        sortKey: 'qty',
+      },
+      subTotalColumn,
     ],
-    tableSortBy: null,
+    tableSortBy: subTotalColumn,
     tableSortOrder: 'desc',
     startDate: null,
     endDate: null,
     results: [],
     search: {},
   }),
-  mounted() {
-    this.tableSortBy = this.tableColumns.find(col => col.key === 'revenue')
-  },
   computed: {
     query: vm => {
       const query = {
