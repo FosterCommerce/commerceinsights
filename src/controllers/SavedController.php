@@ -65,13 +65,15 @@ class SavedController extends \craft\web\Controller
     public function actionGetReport($id)
     {
         $results = (new Query())
-            ->select(['*'])
+            ->select(['query'])
             ->from('{{%saved_reports}}')
             ->where(['id' => $id])
-            ->all();
+            ->scalar();
 
-        if (sizeof($results) > 0) {
-            return $this->asJson(json_decode($results[0]['query']));
+        if ($results) {
+            $results = json_decode($results);
+            $results->search = (object) $results->search;
+            return $this->asJson($results);
         }
 
         return $this->asJson((object) []);

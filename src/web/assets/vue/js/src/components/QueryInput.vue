@@ -22,7 +22,6 @@ export default {
         if (value.trim().length === 0) {
           this.$emit('input', {})
         } else {
-          console.log('weeee')
           this.$emit('input', JSON.parse(value))
         }
       } catch (e) {
