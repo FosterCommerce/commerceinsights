@@ -5,6 +5,7 @@ import App from './App'
 import CraftPlugin from './plugins/Craft'
 import Orders from './pages/Orders'
 import Revenue from './pages/Revenue'
+import Products from './pages/Products'
 import Saved from './pages/Saved'
 
 Vue.config.productionTip = false
@@ -28,6 +29,7 @@ const router = new VueRouter({
   routes: [
     { path: '/revenue', component: Revenue, props: queryProps },
     { path: '/orders', component: Orders, props: queryProps },
+    { path: '/products', component: Products, props: queryProps },
     { path: '/saved', component: Saved },
   ],
 })

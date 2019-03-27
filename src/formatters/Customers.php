@@ -9,6 +9,15 @@ class Customers extends BaseFormatter
 {
     public static $key = 'customers';
 
+    public function __construct($data, $min = null, $max = null)
+    {
+        // TODO:
+        parent::__construct($data, $min, $max);
+        $this->groupData(function ($item) {
+            return (new DateTime($item['dateOrdered']))->format($this->stepFormat);
+        });
+    }
+
     public function totals()
     {
         $groups = $this->empty->merge($this->groupedData)->map(function ($group) {

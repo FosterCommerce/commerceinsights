@@ -4,10 +4,19 @@ namespace fostercommerce\commerceinsights\formatters;
 
 use Craft;
 use Tightenco\Collect\Support\Collection;
+use DateTime;
 
 class Orders extends BaseFormatter
 {
     public static $key = 'orders';
+
+    public function __construct($data, $min = null, $max = null)
+    {
+        parent::__construct($data, $min, $max);
+        $this->groupData(function ($item) {
+            return (new DateTime($item['dateOrdered']))->format($this->stepFormat);
+        });
+    }
 
     public function totals()
     {

@@ -10,7 +10,10 @@ use fostercommerce\commerceinsights\Plugin;
 use fostercommerce\commerceinsights\services\ParamParser;
 use Tightenco\Collect\Support\Collection;
 use yii\web\Response;
-use craft\commerce\elements\Order;
+use craft\commerce\Plugin as CommercePlugin;
+use craft\db\Query;
+use craft\helpers\Db;
+use DateTime;
 
 class ProductController extends \craft\web\Controller
 {
@@ -25,49 +28,90 @@ class ProductController extends \craft\web\Controller
     {
         parent::init();
 
-        // $this->requirePermission('commerce-manageOrders');
-        $this->view->registerAssetBundle(ChartBundle::class);
-
         $this->params = Plugin::getInstance()->paramParser;
     }
 
-    /**
-     * Index of sales
-     */
-    public function actionProductIndex($format='html')
+    private function asCurrency($value)
     {
+        return isset($value) && $value
+            ? Craft::$app->formatter->asCurrency($value)
+            : Craft::$app->formatter->asCurrency(0);
+    }
+
+    public function getProductQuery($min, $max)
+    {
+        $query = (new Query())
+            ->select([
+                'products.id as productId',
+                'productTypes.name as productType',
+                'productTypes.handle as productTypeHandle',
+                'productContent.title as productTitle',
+                'variants.sku',
+                'variants.hasUnlimitedStock',
+                'variants.stock',
+            ])
+            ->from(['{{%commerce_variants}} variants'])
+            ->leftJoin('{{%commerce_products}} products', '[[variants.productId]] = [[products.id]]')
+            ->leftJoin('{{%content}} productContent', '[[products.id]] = [[productContent.elementId]]')
+            ->leftJoin('{{%commerce_producttypes}} productTypes', '[[products.typeId]] = [[productTypes.id]]');
+            // ->leftJoin(['taxAdjustment' => $taxQuery], '[[taxAdjustment.orderId]] = [[orders.id]]')
+            // ->leftJoin(['discountAdjustment' => $discountQuery], '[[taxAdjustment.orderId]] = [[orders.id]]')
+            // ->leftJoin(['user' => $userQuery], '[[user.email]] = [[orders.email]]');
+
+        // $query
+            // ->andWhere(['isCompleted' => true])
+            // ->andWhere(['>=', 'dateOrdered', Db::prepareDateForDb($min)])
+            // ->andWhere(['<', 'dateOrdered', Db::prepareDateForDb($max)])
+            // ->orderBy(
+            //     implode(' ', [
+            //         Craft::$app->request->getParam('sort') ?: 'dateOrdered',
+            //         Craft::$app->request->getParam('dir') ?: 'asc'
+            //     ])
+            // );
+
+        foreach ($this->params->search as $key => $value) {
+            $query->andWhere([$key => $value]);
+        }
+
+        return collect($query->all());
+    }
+
+    public function actionIndex($format='json')
+    {
+        $statuses = CommercePlugin::getInstance()->orderStatuses;
+
         $min = $this->params->start();
         $max = $this->params->end();
 
-        $query = Order::find()
-            ->isCompleted(true)
-            ->dateOrdered(['and', ">{$min}", "<{$max}"])
-            ->orderBy(implode(' ', [Craft::$app->request->getParam('sort') ?: 'dateOrdered', Craft::$app->request->getParam('dir') ?: 'asc']));
+        $currMin = new DateTime($min);
+        $prevMin = (clone $currMin)->sub($currMin->diff(new DateTime($max)))->format('Y-m-d');
 
-        $q = Craft::$app->request->getParam('q');
-        if (!empty($q)) {
-            $query = $query->search($q);
+        $rows = $this->getProductQuery($min, $max);
+
+        $formatterClass = BaseFormatter::getFormatter(Products::class);
+        $formatter = new $formatterClass($rows);
+
+        if ($format == 'csv') {
+            return Plugin::getInstance()->csv->generate('products', $formatter->csv());
         }
 
-        $rows = collect($query->all());
-
-        $formatterClass = BaseFormatter::getFormatter(Craft::$app->request->getParam('formatter'));
-        $formatter = new $formatterClass($rows);
+        $formattedRows = $rows->map(function ($row) {
+            // $row['totalPrice'] = $this->asCurrency($row['totalPrice']);
+            if ($row['hasUnlimitedStock'] === '1') {
+                $row['stock'] = '∞';
+            }
+            return $row;
+        });
 
         $data = [
             'formatter' => $formatter::$key,
-            'chartShowsCurrency' => $formatter->showsCurrency(),
-            'totals' => $formatter->totals(),
-            'chartData' => $formatter->format(),
             'min' => $min,
             'max' => $max,
-            'chartTable' => $this->getView()->renderTemplate('commerceinsights/_table', ['data' => $rows]),
+            'range' => $this->params->range(),
+            'search' => (object) $this->params->search,
+            'tableData' => $formattedRows,
         ];
 
-        if (Craft::$app->request->isAjax || $format == 'json') {
-            return $this->asJson($data);
-        }
-
-        return $this->renderTemplate('commerceinsights/products/_index', $data);
+        return $this->asJson($data);
     }
 }

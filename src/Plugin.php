@@ -76,9 +76,9 @@ class Plugin extends \craft\base\Plugin
             'dashboard' => ['label' => Craft::t('commerceinsights', 'Dashboard'), 'url' => 'commerceinsights/view/dashboard'],
             'revenue' => ['label' => Craft::t('commerceinsights', 'Revenue'), 'url' => 'commerceinsights/view/revenue'],
             'orders' => ['label' => Craft::t('commerceinsights', 'Orders'), 'url' => 'commerceinsights/view/orders'],
+            'products' => ['label' => Craft::t('commerceinsights', 'Products'), 'url' => 'commerceinsights/view/products'],
             'saved' => ['label' => Craft::t('commerceinsights', 'Saved'), 'url' => 'commerceinsights/view/saved'],
             // 'customers' => ['label' => Craft::t('commerceinsights', 'Customers'), 'url' => 'commerceinsights/customers'],
-            // 'products' => ['label' => Craft::t('commerceinsights', 'Products'), 'url' => 'commerceinsights/products'],
         ];
         return $item;
     }

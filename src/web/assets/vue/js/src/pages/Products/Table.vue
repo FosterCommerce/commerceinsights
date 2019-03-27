@@ -15,7 +15,7 @@ import state from './state'
 import CraftTable from '../../components/craft/Table'
 
 export default {
-  name: 'OrdersTable',
+  name: 'ProductsTable',
   data: () => ({ state }),
   computed: {
     sortOrder: ({ state }) => ({

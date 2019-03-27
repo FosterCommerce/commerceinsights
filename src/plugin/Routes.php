@@ -22,6 +22,9 @@ trait Routes
             $event->rules['commerceinsights/orders'] = 'commerceinsights/order/order-index';
             $event->rules['commerceinsights/orders/<format:json>'] = 'commerceinsights/order/order-index';
             $event->rules['commerceinsights/orders/<format:csv>'] = 'commerceinsights/order/order-index';
+            $event->rules['commerceinsights/products'] = 'commerceinsights/product/index';
+            $event->rules['commerceinsights/products/<format:json>'] = 'commerceinsights/product/index';
+            $event->rules['commerceinsights/products/<format:csv>'] = 'commerceinsights/product/index';
             $event->rules['commerceinsights/saved'] = 'commerceinsights/saved/list';
             $event->rules['commerceinsights/saved/save'] = 'commerceinsights/saved/save-report';
             $event->rules['commerceinsights/saved/<id>'] = 'commerceinsights/saved/get-report';
