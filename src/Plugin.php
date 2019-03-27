@@ -61,7 +61,7 @@ class Plugin extends \craft\base\Plugin
             $variable->set('url', Url::class);
         });
 
-        Craft::$app->view->registerTwigExtension(new twig\Extension);
+        Craft::$app->view->registerTwigExtension(new web\twig\Extension);
     }
 
     /**

@@ -67,12 +67,6 @@ class RevenueController extends \craft\web\Controller
                 ])
             );
 
-        // TODO:
-        // $q = $request->getParam('q');
-        // if (!empty($q)) {
-        //     $query = $query->search($q);
-        // }
-
         $rows = collect($query->all());
         return $rows;
     }
@@ -136,7 +130,7 @@ class RevenueController extends \craft\web\Controller
         ];
 
         // if ($request->isAjax || $format == 'json') {
-            return $this->asJson($data);
+        return $this->asJson($data);
         // }
 
         // return $this->renderTemplate('commerceinsights/revenue/_index', $data);

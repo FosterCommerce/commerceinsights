@@ -1,12 +1,17 @@
 'use strict'
 
 const { VueLoaderPlugin } = require('vue-loader')
+const ManifestPlugin = require('webpack-manifest-plugin')
+const CleanWebpackPlugin = require('clean-webpack-plugin')
 
 module.exports = {
   mode: 'development',
   entry: [
     './src/main.js',
   ],
+  output: {
+    filename: '[name].[contentHash].js',
+  },
   resolve: {
     alias: {
       'vue$': 'vue/dist/vue.esm.js'
@@ -44,6 +49,8 @@ module.exports = {
     ]
   },
   plugins: [
+    new CleanWebpackPlugin(),
+    new ManifestPlugin(),
     new VueLoaderPlugin()
   ]
 }

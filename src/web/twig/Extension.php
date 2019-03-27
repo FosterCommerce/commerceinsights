@@ -1,6 +1,6 @@
 <?php
 
-namespace fostercommerce\commerceinsights\twig;
+namespace fostercommerce\commerceinsights\web\twig;
 
 class Extension extends \Twig_Extension
 {

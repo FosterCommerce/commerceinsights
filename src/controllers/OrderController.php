@@ -153,7 +153,7 @@ class OrderController extends \craft\web\Controller
         ];
 
         // if (Craft::$app->request->isAjax || $format == 'json') {
-            return $this->asJson($data);
+        return $this->asJson($data);
         // }
 
         // return $this->renderTemplate('commerceinsights/orders/_index', $data);
