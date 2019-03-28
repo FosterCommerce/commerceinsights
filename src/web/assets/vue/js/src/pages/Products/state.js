@@ -1,10 +1,22 @@
 import Vue from 'vue'
-import rowCellLink from './cells/RowCellLink'
 
-const ProductCell = rowCellLink({
-  urlF: (column, data) => `/admin/commerce/products/${data.productTypeHandle}/${data.productId}`,
-  labelF: (column, data) => data.productTitle,
-})
+const ProductCell = {
+  name: 'ProductCell',
+  render() {
+    return (
+      <abbr>
+        <span class={{status: true, disabled: !this.data.enabled, live: this.data.enabled}}></span>
+        <a href={`/admin/commerce/products/${this.data.productTypeHandle}/${this.data.productId}`}>
+          {this.data.productTitle}
+        </a>
+      </abbr>
+    )
+  },
+  props: {
+    data: Object,
+  },
+}
+
 
 const subTotalColumn = {
   key: 'subTotal',
@@ -55,6 +67,7 @@ export default new Vue({
     endDate: null,
     results: [],
     search: {},
+    productFilter: null,
   }),
   computed: {
     query: vm => {
@@ -62,6 +75,7 @@ export default new Vue({
         sort: vm.tableSortBy ? vm.tableSortBy.sortKey : null,
         dir: vm.tableSortOrder,
         search: vm.search,
+        productFilter: vm.productFilter,
       }
 
       if (vm.range !== '') {
@@ -77,5 +91,14 @@ export default new Vue({
         end: vm.endDate,
       }
     },
+    dynamicColumns: ({tableColumns, productFilter}) => {
+      return tableColumns.filter(col => {
+        if (col.key === 'sku' && productFilter === 'all') {
+          return false
+        }
+
+        return true
+      })
+    }
   },
 })

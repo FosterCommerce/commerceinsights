@@ -38,7 +38,7 @@ class ProductController extends \craft\web\Controller
             : Craft::$app->formatter->asCurrency(0);
     }
 
-    public function getProductQuery($min, $max)
+    public function getProductQuery($productFilter, $min, $max)
     {
         $lineItemQuery = (new Query())
             ->select(['purchasableId', 'COUNT(*) as orderCount', 'SUM(qty) as qty', 'SUM(subTotal) as subTotal'])
@@ -49,9 +49,12 @@ class ProductController extends \craft\web\Controller
             ->andWhere(['>=', 'dateOrdered', Db::prepareDateForDb($min)])
             ->andWhere(['<', 'dateOrdered', Db::prepareDateForDb($max)]);
 
-        $query = (new Query())
-            ->select([
+        $query = new Query();
+
+        if ($productFilter === 'variants') {
+            $query = $query->select([
                 'products.id as productId',
+                'elements.enabled',
                 'productTypes.name as productType',
                 'productTypes.handle as productTypeHandle',
                 'productContent.title as productTitle',
@@ -65,21 +68,41 @@ class ProductController extends \craft\web\Controller
             ->from(['{{%commerce_variants}} variants'])
             ->leftJoin(['lineItems' => $lineItemQuery], '[[variants.id]] = [[lineItems.purchasableId]]')
             ->leftJoin('{{%commerce_products}} products', '[[variants.productId]] = [[products.id]]')
+            ->leftJoin('{{%elements}} elements', '[[elements.id]] = [[products.id]]')
+            ->leftJoin('{{%content}} productContent', '[[variants.id]] = [[productContent.elementId]]')
+            ->leftJoin('{{%commerce_producttypes}} productTypes', '[[products.typeId]] = [[productTypes.id]]');
+        } else {
+            $variantQuery = (new Query())
+                ->select(['variants.productId', 'MAX(variants.hasUnlimitedStock) as hasUnlimitedStock', 'SUM(lineItems.orderCount) orderCount', 'SUM(lineItems.qty) as qty', 'SUM(lineItems.subTotal) as subTotal', 'SUM(variants.stock) as stock'])
+                ->from('{{%commerce_variants}} variants')
+                ->leftJoin(['lineItems' => $lineItemQuery], '[[variants.id]] = [[lineItems.purchasableId]]')
+                ->groupBy(['variants.productId']);
+
+            $query = $query->select([
+                'products.id as productId',
+                'elements.enabled',
+                'productTypes.name as productType',
+                'productTypes.handle as productTypeHandle',
+                'productContent.title as productTitle',
+                'variants.orderCount',
+                'variants.qty',
+                'variants.subTotal',
+                'variants.hasUnlimitedStock',
+                'variants.stock as stock',
+            ])
+            ->from(['{{%commerce_products}} products'])
+            ->leftJoin(['variants' => $variantQuery], '[[products.id]] = [[variants.productId]]')
+            ->leftJoin('{{%elements}} elements', '[[elements.id]] = [[products.id]]')
             ->leftJoin('{{%content}} productContent', '[[products.id]] = [[productContent.elementId]]')
-            ->leftJoin('{{%commerce_producttypes}} productTypes', '[[products.typeId]] = [[productTypes.id]]')
-            ->where(['>', 'lineItems.orderCount', 0])
-            ->orderBy(
-                implode(' ', [
-                    Craft::$app->request->getParam('sort') ?: 'lineItems.subTotal',
-                    Craft::$app->request->getParam('dir') ?: 'desc'
-                ])
-            );
+            ->leftJoin('{{%commerce_producttypes}} productTypes', '[[products.typeId]] = [[productTypes.id]]');
+        }
 
-        // $query
-            // ->andWhere(['isCompleted' => true])
-            // ->andWhere(['>=', 'dateOrdered', Db::prepareDateForDb($min)])
-            // ->andWhere(['<', 'dateOrdered', Db::prepareDateForDb($max)])
-
+        $query = $query->orderBy(
+            implode(' ', [
+                Craft::$app->request->getParam('sort') ?: 'lineItems.subTotal',
+                Craft::$app->request->getParam('dir') ?: 'desc'
+            ])
+        );
 
         foreach ($this->params->search as $key => $value) {
             $query->andWhere([$key => $value]);
@@ -98,7 +121,9 @@ class ProductController extends \craft\web\Controller
         $currMin = new DateTime($min);
         $prevMin = (clone $currMin)->sub($currMin->diff(new DateTime($max)))->format('Y-m-d');
 
-        $rows = $this->getProductQuery($min, $max);
+        $productFilter = Craft::$app->request->getParam('productFilter') ?: 'all';
+
+        $rows = $this->getProductQuery($productFilter, $min, $max);
 
         $formatterClass = BaseFormatter::getFormatter(Products::class);
         $formatter = new $formatterClass($rows);
@@ -108,12 +133,12 @@ class ProductController extends \craft\web\Controller
         }
 
         $formattedRows = $rows->map(function ($row) {
-            // $row['totalPrice'] = $this->asCurrency($row['totalPrice']);
             if ($row['hasUnlimitedStock'] === '1') {
                 $row['stock'] = '∞';
             }
 
             $row['subTotal'] = $this->asCurrency($row['subTotal']);
+            $row['enabled'] = (bool) $row['enabled'];
 
             return $row;
         });
@@ -125,6 +150,7 @@ class ProductController extends \craft\web\Controller
             'range' => $this->params->range(),
             'search' => (object) $this->params->search,
             'tableData' => $formattedRows,
+            'productFilter' => $productFilter,
         ];
 
         return $this->asJson($data);

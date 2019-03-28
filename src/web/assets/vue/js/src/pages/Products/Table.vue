@@ -1,7 +1,7 @@
 <template>
   <div class="elements">
     <CraftTable
-      :columns="state.tableColumns"
+      :columns="state.dynamicColumns"
       :data="state.results"
       :sort-by="state.tableSortBy"
       :sort-order="state.tableSortOrder"

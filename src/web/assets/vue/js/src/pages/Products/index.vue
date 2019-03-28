@@ -1,6 +1,23 @@
 <template>
   <Layout title="Products">
+    <template slot="sidebar">
+      <nav>
+        <ul>
+          <li>
+            <a href="#" :class="{sel: this.state.productFilter === 'all'}" @click="changeProductFilter('all')">All</a>
+          </li>
+          <li>
+            <a href="#" :class="{sel: this.state.productFilter === 'variants'}" @click="changeProductFilter('variants')">Variants</a>
+          </li>
+        </ul>
+      </nav>
+    </template>
     <template slot="actionButton">
+      <!-- <Checkbox label="All time" /> -->
+      <!-- <label class="all-time-filter">
+        <input type="checkbox" />
+        All Time
+      </label> -->
       <RangeSelect v-model="state.range" />
       <Date @input="startDateChanged" :value="state.startDate" />
       <Date @input="endDateChanged" :value="state.endDate" />
@@ -39,6 +56,7 @@ import RangeSelect from '../../components/RangeSelect'
 import ActionButton from '../../components/craft/ActionButton'
 import SaveReportModal, {mixin as saveReportMixin} from '../../components/SaveReportModal'
 import QueryInput from '../../components/QueryInput'
+import Checkbox from '../../components/craft/forms/Checkbox'
 import savedReport from '../../mixins/savedReport'
 
 export default {
@@ -67,6 +85,9 @@ export default {
       this.state.range = ''
       this.state.endDate = format(value, 'YYYY-MM-DD')
     },
+    changeProductFilter(filter) {
+      this.state.productFilter = filter
+    },
     update() {
       this.$axios
         .get('products', { params: this.state.query })
@@ -77,6 +98,7 @@ export default {
           this.state.results = data.tableData
           this.state.range = data.range
           this.state.search = data.search
+          this.state.productFilter = data.productFilter
 
           Vue.nextTick().then(() => (this.shouldUpdate = true))
         })
@@ -90,11 +112,16 @@ export default {
     QueryInput,
     ActionButton,
     SaveReportModal,
+    Checkbox,
   },
 }
 </script>
 
 <style scoped>
+.all-time-filter {
+  margin-right: 20px;
+}
+
 .ci-actions {
   display: flex;
   align-items: baseline;
