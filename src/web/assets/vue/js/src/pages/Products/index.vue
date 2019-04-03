@@ -1,33 +1,33 @@
 <template>
   <Layout title="Products">
-    <template slot="sidebar">
+    <template v-slot:sidebar>
       <nav>
         <ul>
           <li>
-            <a href="#" :class="{sel: this.state.productFilter === 'all'}" @click="changeProductFilter('all')">All</a>
+            <a href="#" :class="{sel: state.productFilter === 'all'}" @click="changeProductFilter('all')">All</a>
           </li>
           <li>
-            <a href="#" :class="{sel: this.state.productFilter === 'variants'}" @click="changeProductFilter('variants')">Variants</a>
+            <a href="#" :class="{sel: state.productFilter === 'variants'}" @click="changeProductFilter('variants')">Variants</a>
           </li>
         </ul>
       </nav>
     </template>
-    <template slot="actionButton">
-      <!-- <Checkbox label="All time" /> -->
+    <template v-slot:actionButton>
+      <Checkbox label="All time" v-model="state.allTime" />
       <!-- <label class="all-time-filter">
         <input type="checkbox" />
         All Time
       </label> -->
-      <RangeSelect v-model="state.range" />
-      <Date @input="startDateChanged" :value="state.startDate" />
-      <Date @input="endDateChanged" :value="state.endDate" />
+      <RangeSelect :disabled="state.allTime" v-model="state.range" />
+      <Date :disabled="state.allTime" @input="startDateChanged" :value="state.startDate" />
+      <Date :disabled="state.allTime" @input="endDateChanged" :value="state.endDate" />
       <ActionButton label="Save Report" icon="add" @click="toggleModal" />
     </template>
 
     <SaveReportModal
       v-if="saveModalVisible"
       report-type="products"
-      :query="this.state.query"
+      :query="state.query"
       @hide="toggleModal"
     />
 

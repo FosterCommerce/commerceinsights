@@ -38,16 +38,20 @@ class ProductController extends \craft\web\Controller
             : Craft::$app->formatter->asCurrency(0);
     }
 
-    public function getProductQuery($productFilter, $min, $max)
+    public function getProductQuery($productFilter, $min, $max, $allTime = false)
     {
         $lineItemQuery = (new Query())
             ->select(['purchasableId', 'COUNT(*) as orderCount', 'SUM(qty) as qty', 'SUM(subTotal) as subTotal'])
             ->from('{{%commerce_lineitems}} lineItems')
             ->leftJoin('{{%commerce_orders}} orders', '[[lineItems.orderId]] = [[orders.id]]')
             ->groupBy(['purchasableId'])
-            ->where(['isCompleted' => true])
-            ->andWhere(['>=', 'dateOrdered', Db::prepareDateForDb($min)])
-            ->andWhere(['<', 'dateOrdered', Db::prepareDateForDb($max)]);
+            ->where(['isCompleted' => true]);
+
+        if (!$allTime) {
+            $lineItemQuery = $lineItemQuery
+                ->andWhere(['>=', 'dateOrdered', Db::prepareDateForDb($min)])
+                ->andWhere(['<', 'dateOrdered', Db::prepareDateForDb($max)]);
+        }
 
         $query = new Query();
 
@@ -123,7 +127,9 @@ class ProductController extends \craft\web\Controller
 
         $productFilter = Craft::$app->request->getParam('productFilter') ?: 'all';
 
-        $rows = $this->getProductQuery($productFilter, $min, $max);
+        $allTime = Craft::$app->request->getParam('allTime') === 'true';
+
+        $rows = $this->getProductQuery($productFilter, $min, $max, $allTime);
 
         $formatterClass = BaseFormatter::getFormatter(Products::class);
         $formatter = new $formatterClass($rows);

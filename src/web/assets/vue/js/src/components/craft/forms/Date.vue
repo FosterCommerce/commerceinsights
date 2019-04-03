@@ -17,6 +17,7 @@ export default {
   }),
   props: {
     value: String,
+    disabled: Boolean,
   },
   computed: {
     date: ({ value }) => format(parse(value), 'MM/DD/YYYY'),
@@ -25,6 +26,9 @@ export default {
     date() {
       this.picker.datepicker('setDate', this.date)
     },
+    disabled() {
+      this.picker.datepicker('option', 'disabled', this.disabled)
+    }
   },
   mounted() {
     this.defaultDate = this.date
@@ -37,6 +41,7 @@ export default {
     })
 
     this.picker.datepicker('setDate', this.date)
+    this.picker.datepicker('option', 'disabled', this.disabled)
   },
   methods: {
     onInput() {

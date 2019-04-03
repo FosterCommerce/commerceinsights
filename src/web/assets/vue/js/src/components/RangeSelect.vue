@@ -1,5 +1,5 @@
 <template>
-  <Dropdown @input="onChange" :data="ranges" :value="value">
+  <Dropdown :disabled="disabled" @input="onChange" :data="ranges" :value="value">
     <option
       slot-scope="scope"
       :key="scope.item.value"
@@ -34,6 +34,7 @@ export default {
     ranges,
   }),
   props: {
+    disabled: Boolean,
     value: {
       type: String,
       default: 'this-week',

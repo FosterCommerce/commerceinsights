@@ -1,6 +1,6 @@
 <template>
   <div class="select">
-    <select @change="onChange">
+    <select :disabled="disabled" @change="onChange">
       <slot v-for="item in transformed" :item="item">
         <option :value="item.value" :key="item.value" :selected="item.selected">
           {{ item.label }}
@@ -14,6 +14,7 @@
 export default {
   name: 'CraftDropdown',
   props: {
+    disabled: Boolean,
     data: {
       type: Array,
       default: () => [],
@@ -44,3 +45,12 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+select {
+  transition: background-color .5s ease !important;
+}
+select:disabled {
+  background-color: #d3d3d3;
+}
+</style>

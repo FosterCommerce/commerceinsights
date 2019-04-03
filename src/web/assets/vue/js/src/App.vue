@@ -4,6 +4,7 @@
 
 <script>
 import './tailwind.css'
+import '../node_modules/pretty-checkbox/dist/pretty-checkbox.css'
 
 export default {
   name: 'App',

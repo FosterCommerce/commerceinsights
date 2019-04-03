@@ -1,6 +1,6 @@
 <template>
   <Layout title="Orders">
-    <template slot="actionButton">
+    <template v-slot:actionButton>
       <RangeSelect v-model="state.range" />
       <Date @input="startDateChanged" :value="state.startDate" />
       <Date @input="endDateChanged" :value="state.endDate" />

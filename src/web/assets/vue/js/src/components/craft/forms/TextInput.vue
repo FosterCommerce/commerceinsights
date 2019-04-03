@@ -4,6 +4,7 @@
       type="text"
       class="text"
       autocomplete="off"
+      :disabled="disabled"
       :class="{ fullwidth: fullWidth }"
       :id="id"
       :placeholder="placeholder"
@@ -24,6 +25,10 @@ export default {
     errors: Boolean,
     success: Boolean,
     name: String,
+    disabled: {
+      type: Boolean,
+      default: false
+    },
     fullWidth: {
       type: Boolean,
       default: true,
@@ -36,3 +41,12 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+input {
+  transition: background-color .5s ease !important;
+}
+input:disabled {
+  background-color: #d3d3d3;
+}
+</style>

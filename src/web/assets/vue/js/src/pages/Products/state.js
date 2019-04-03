@@ -17,7 +17,6 @@ const ProductCell = {
   },
 }
 
-
 const subTotalColumn = {
   key: 'subTotal',
   label: 'Revenue',
@@ -25,48 +24,55 @@ const subTotalColumn = {
   sortKey: 'subTotal',
 }
 
+const columns = [
+  {
+    key: 'productTitle',
+    label: 'Name',
+    sortable: false,
+    component: ProductCell,
+  },
+  {
+    key: 'sku',
+    label: 'SKU',
+    sortable: false,
+  },
+  {
+    key: 'productType',
+    label: 'Product Type',
+    sortable: false,
+  },
+  {
+    key: 'stock',
+    label: 'Stock Left',
+    sortable: true,
+    sortKey: 'stock',
+  },
+  {
+    key: 'orderCount',
+    label: 'Total Orders',
+    sortable: true,
+    sortKey: 'orderCount',
+  },
+  {
+    key: 'qty',
+    label: 'Total Sold',
+    sortable: true,
+    sortKey: 'qty',
+  },
+  subTotalColumn,
+]
+
 export default new Vue({
   data: () => ({
     formatter: 'revenue',
     range: null,
-    tableColumns: [
-      {
-        key: 'productTitle',
-        label: 'Name',
-        sortable: false,
-        component: ProductCell,
-      },
-      {
-        key: 'sku',
-        label: 'SKU',
-        sortable: false,
-      },
-      {
-        key: 'stock',
-        label: 'Stock Left',
-        sortable: true,
-        sortKey: 'stock',
-      },
-      {
-        key: 'orderCount',
-        label: 'Total Orders',
-        sortable: true,
-        sortKey: 'orderCount',
-      },
-      {
-        key: 'qty',
-        label: 'Total Sold',
-        sortable: true,
-        sortKey: 'qty',
-      },
-      subTotalColumn,
-    ],
     tableSortBy: subTotalColumn,
     tableSortOrder: 'desc',
     startDate: null,
     endDate: null,
     results: [],
     search: {},
+    allTime: false,
     productFilter: null,
   }),
   computed: {
@@ -76,6 +82,13 @@ export default new Vue({
         dir: vm.tableSortOrder,
         search: vm.search,
         productFilter: vm.productFilter,
+      }
+
+      if (vm.allTime) {
+        return {
+          ...query,
+          allTime: true
+        }
       }
 
       if (vm.range !== '') {
@@ -91,9 +104,13 @@ export default new Vue({
         end: vm.endDate,
       }
     },
-    dynamicColumns: ({tableColumns, productFilter}) => {
-      return tableColumns.filter(col => {
+    tableColumns: ({productFilter}) => {
+      return columns.filter(col => {
         if (col.key === 'sku' && productFilter === 'all') {
+          // Don't show the SKU for regular products
+          return false
+        } else if (col.key === 'productType' && productFilter === 'variants') {
+          // Don't show the Product Type for variants
           return false
         }
 

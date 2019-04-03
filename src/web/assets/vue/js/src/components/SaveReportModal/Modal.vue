@@ -1,14 +1,16 @@
 <template>
   <Modal className="save-report-modal" @hide="$emit('hide')" :width="200" :height="169">
-    <h1 slot="header">Save Report</h1>
-    <div slot="main">
-      <div class="flex">
-        <TextInput class="flex-grow" :class="{errors: !!saveReportError}"
-          placeholder="Report name"
-          v-model="saveReportName" />
-        <ActionButton label="Save" @click="saveReport" />
+    <template v-slot:header><h1>Save Report</h1></template>
+    <template v-slot:main>
+      <div>
+        <div class="flex">
+          <TextInput class="flex-grow" :class="{errors: !!saveReportError}"
+            placeholder="Report name"
+            v-model="saveReportName" />
+          <ActionButton label="Save" @click="saveReport" />
+        </div>
       </div>
-    </div>
+    </template>
   </Modal>
 </template>
 

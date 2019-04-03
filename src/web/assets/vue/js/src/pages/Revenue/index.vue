@@ -1,6 +1,6 @@
 <template>
   <Layout title="Revenue">
-    <template slot="actionButton">
+    <template v-slot:actionButton>
       <RangeSelect v-model="state.range" />
       <Date @input="startDateChanged" :value="state.startDate" />
       <Date @input="endDateChanged" :value="state.endDate" />
@@ -14,7 +14,7 @@
       @hide="toggleModal"
     />
 
-    <nav slot="sidebar">
+    <nav slot:sidebar>
       <ul id="sidebar-ranges">
         <li><a href="#" @click="setRange('today')">Today</a></li>
         <li><a href="#" @click="setRange('this-week')">This Week</a></li>
