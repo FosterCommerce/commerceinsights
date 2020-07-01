@@ -1,10 +1,6 @@
-# commerceinsights
+# Commerce Insights for Craft Commerce 2
+DEPRECATED
 
-
-
-## Development
-
-> *TODO*
 
 ### Build front-end for production
 
